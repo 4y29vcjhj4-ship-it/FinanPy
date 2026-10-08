@@ -186,6 +186,72 @@ body{overflow-x:hidden}
  .compact-head .mascotwrap{top:-18px;right:-3px;width:190px;height:165px}
  .compact-head .mascot{width:210px}
 }
+
+/* Última corrección: Mensualidades sin texto vacío */
+.month-empty,
+.empty-monthly,
+.monthly-empty {
+  display:none !important;
+}
+
+/* Corrección final de mascota: tamaño cercano al bloque FinanPY y sin invadir el saldo */
+@media(max-width:500px){
+  .sitehead{
+    min-height:310px !important;
+    padding-top:32px !important;
+  }
+  .sitehead .top{
+    min-height:235px !important;
+  }
+  .brandblock{
+    max-width:56% !important;
+  }
+  .mascotwrap{
+    right:-2px !important;
+    top:4px !important;
+    width:185px !important;
+    height:160px !important;
+    overflow:hidden !important;
+  }
+  .mascot{
+    width:205px !important;
+  }
+  .homebalance{
+    margin-top:-20px !important;
+    z-index:6 !important;
+  }
+}
+@media(max-width:380px){
+  .sitehead{
+    min-height:295px !important;
+  }
+  .mascotwrap{
+    width:165px !important;
+    height:145px !important;
+  }
+  .mascot{
+    width:185px !important;
+  }
+  .homebalance{
+    margin-top:-12px !important;
+  }
+}
+
+/* Los gráficos mantienen una escala real: 0–2M, saltos de 200K. */
+.premiumchart{
+  overflow:visible !important;
+}
+.chartplot .bar{
+  transform-origin:bottom center;
+}
+.monthly-summary-chart{
+  margin-bottom:18px;
+}
+
+/* Mensualidades vacías: no mostrar texto central de invitación */
+#subs:empty{
+  min-height:0 !important;
+}
 </style>
 </head>
 <body>
@@ -302,8 +368,10 @@ function home(){
  </section>
  <section class="sectionhead"><h2>Próximo pago</h2><button class="link" onclick="instPage()">Ver todo <b>›</b></button></section>
  <div id="next"></div>
- <section class="sectionhead"><h2>Este mes</h2><button class="monthpicker" onclick="analyticsPage()">Ver análisis <b>›</b></button></section>
+ <section class="sectionhead"><h2>Esta semana</h2><button class="monthpicker" onclick="analyticsPage()">Ver análisis <b>›</b></button></section>
  <div class="card chart premiumchart" id="chart"></div>
+ <section class="sectionhead"><h2>Resumen mensual</h2></section>
+ <div class="card chart premiumchart monthly-summary-chart" id="monthlyChart"></div>
  <section class="sectionhead"><h2>Gastos por categoría</h2><button class="link" onclick="analyticsPage()">Ver más <b>›</b></button></section>
  <div class="card categoryempty" id="catpreview"></div>
  <section class="sectionhead"><h2>Últimos movimientos</h2><button class="link" onclick="historyPage()">Ver todo <b>›</b></button></section>
@@ -328,25 +396,69 @@ function renderNext(){
  const x=pending().find(x=>x.days>=0);
  $("next").innerHTML=x?`<div class="up nextpremium"><div class="payicon">▤</div><div class="paymain"><small>${new Date(x.q+"T12:00:00").toLocaleDateString("es-PY")} · ${x.days===0?"Hoy":x.days+" días"}</small><b>${esc(x.i.name)} · Cuota ${x.n+1}/${x.i.count}</b></div><b class="payamount">${money(x.i.amount)}</b></div>`:`<div class="up nextpremium"><div class="payicon">✓</div><div class="paymain"><b>No hay pagos pendientes</b><small>¡Todo al día!</small></div></div>`;
 }
-function renderChart(){
- const a=[];
- for(let k=5;k>=0;k--){
-  const x=new Date();x.setMonth(x.getMonth()-k);
-  const key=x.toISOString().slice(0,7);
-  const v=d.tx.filter(t=>t.type==="e"&&t.date.slice(0,7)===key).reduce((sum,t)=>sum+Number(t.a),0);
-  a.push({l:x.toLocaleDateString("es-PY",{month:"short"}),v});
- }
+function chartScale(){
  const MAX=2000000;
  const labels=[2000000,1800000,1600000,1400000,1200000,1000000,800000,600000,400000,200000,0];
  const fmtAxis=n=>n===0?"0":n>=1000000?(n/1000000).toFixed(n%1000000?1:0)+"M":(n/1000)+"k";
- const fmtShort=n=>n>=1000000?(n/1000000).toFixed(n%1000000?1:0)+"M":Math.round(n/1000)+"k";
- $("chart").innerHTML=`<div class="chartaxis">${labels.map(n=>`<span>${fmtAxis(n)}</span>`).join("")}</div><div class="chartplot">${a.map(x=>{
-   const pct=Math.min(100,(x.v/MAX)*100);
-   const height=Math.max(2,pct);
-   const over=x.v>MAX;
-   const label=over?"2M+":fmtShort(x.v);
-   return `<div class="barw"><div class="bar ${over?"over":""}" style="height:${height}%"><span class="chartvalue">${label}</span></div><small>${x.l}</small></div>`;
- }).join("")}</div>`;
+ const fmtShort=n=>{
+   if(n>=1000000) return (n/1000000).toFixed(n%1000000?1:0)+"M";
+   if(n>=1000) return Math.round(n/1000)+"k";
+   return String(Math.round(n));
+ };
+ return {MAX,labels,fmtAxis,fmtShort};
+}
+function renderChart(){
+ const {MAX,labels,fmtAxis,fmtShort}=chartScale();
+
+ // Current week: Monday through Sunday.
+ const now=new Date();
+ const day=now.getDay(); // 0 = Sunday
+ const mondayOffset=day===0?-6:1-day;
+ const monday=new Date(now);
+ monday.setDate(now.getDate()+mondayOffset);
+ monday.setHours(12,0,0,0);
+
+ const week=[];
+ for(let i=0;i<7;i++){
+   const x=new Date(monday);
+   x.setDate(monday.getDate()+i);
+   const key=x.toISOString().slice(0,10);
+   const v=d.tx.filter(t=>t.type==="e"&&t.date===key)
+     .reduce((sum,t)=>sum+Number(t.a),0);
+   const label=x.toLocaleDateString("es-PY",{weekday:"short"}).replace(".","");
+   week.push({l:label.charAt(0).toUpperCase()+label.slice(1),v});
+ }
+
+ // Six-month monthly summary.
+ const months=[];
+ for(let k=5;k>=0;k--){
+   const x=new Date(now.getFullYear(),now.getMonth()-k,1,12);
+   const key=x.toISOString().slice(0,7);
+   const v=d.tx.filter(t=>t.type==="e"&&t.date.slice(0,7)===key)
+     .reduce((sum,t)=>sum+Number(t.a),0);
+   const label=x.toLocaleDateString("es-PY",{month:"short"}).replace(".","");
+   months.push({l:label.charAt(0).toUpperCase()+label.slice(1),v});
+ }
+
+ const build=(arr, extraClass="")=>`<div class="chartaxis">${labels.map(n=>`<span>${fmtAxis(n)}</span>`).join("")}</div>
+   <div class="chartplot">${arr.map(x=>{
+     const pct=Math.min(100,(x.v/MAX)*100);
+     const height=Math.max(x.v>0?2:0,pct);
+     const over=x.v>MAX;
+     const label=x.v===0?"":(over?"2M+":fmtShort(x.v));
+     return `<div class="barw">
+       <div class="bar ${over?"over":""}" style="height:${height}%">
+         <span class="chartvalue">${label}</span>
+       </div>
+       <small>${x.l}</small>
+     </div>`;
+   }).join("")}</div>`;
+
+ const chart=$("chart");
+ if(chart) chart.innerHTML=build(week);
+
+ const monthly=$("monthlyChart");
+ if(monthly) monthly.innerHTML=build(months,"monthly");
 }
 function txRow(x){
  return `<div class="row" onclick="editTx('${x.id}')"><i class="dot ${x.type==="e"?"r":""}"></i><div class="main"><b>${esc(x.desc||x.cat)}</b><small>${esc(x.cat)} · ${new Date(x.date+"T12:00:00").toLocaleDateString("es-PY")}</small></div><span class="amt ${x.type==="e"?"red":"green"}">${x.type==="e"?"-":"+"}${money(x.a)}</span></div>`;
@@ -417,7 +529,7 @@ function showSubs(){
  $("subs").innerHTML=d.subs.length?d.subs.map(s=>{
   const q=subscriptionNext(s),key=today().slice(0,7),paid=(s.paid||[]).includes(key);
   return `<div class="install-card"><div class="head"><div><b>${esc(s.name)}</b><small>${esc(s.cat)} · día ${s.day} de cada mes</small></div><b>${money(s.amount)}</b></div><div class="section"><span class="badge">${paid?"✓ Pagada este mes":"Pendiente este mes"}</span> <small>Próximo: ${new Date(q+"T12:00:00").toLocaleDateString("es-PY")}</small></div><div class="actions section"><button class="btn" onclick="subPay('${s.id}')">${paid?"Ya pagada":"Pagar este mes"}</button><button class="btn danger" onclick="deleteSub('${s.id}')">Eliminar</button></div></div>`;
- }).join(""):`<div class="empty">Agregá Wi‑Fi, Spotify, Netflix u otra mensualidad.</div>`;requestAnimationFrame(fitMoney);
+ }).join(""):`<div class="empty"></div>`;requestAnimationFrame(fitMoney);
 }
 function instModal(){
  $("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>Nueva cuota</h2>
