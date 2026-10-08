@@ -159,6 +159,33 @@ body{overflow-x:hidden}
 
 .sheet{padding-bottom:calc(36px + env(safe-area-inset-bottom))}
 .sheet .btn:last-child{margin-bottom:4px}
+
+/* Fixed 0–2,000,000 G. chart scale */
+.premiumchart{height:280px!important;display:flex!important;align-items:stretch!important;gap:8px!important;padding:16px 12px 12px!important;position:relative!important}
+.chartaxis{width:42px;flex:0 0 42px;display:flex;flex-direction:column;justify-content:space-between;padding:2px 0 25px;color:#78867f;font-size:9px;text-align:right}
+.chartplot{flex:1;min-width:0;position:relative;display:flex;align-items:flex-end;gap:7px;padding:0 3px 0;border-left:1px solid #22322b;border-bottom:1px solid #22322b;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(10% - 1px),rgba(130,150,140,.12) calc(10% - 1px),rgba(130,150,140,.12) 10%)}
+.chartplot .barw{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;min-width:0;flex:1;position:relative}
+.chartplot .bar{width:72%;max-width:44px;background:linear-gradient(180deg,#0ed18f,#07875f);border-radius:8px 8px 3px 3px;min-height:3px;transition:height .25s ease}
+.chartplot .bar.over{background:linear-gradient(180deg,#19dca0,#0a6e53)}
+.chartplot small{position:absolute;bottom:-23px;left:0;right:0;color:#8e9b95;margin:0;font-size:10px;text-align:center}
+.chartvalue{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:#b8c6c0;white-space:nowrap;font-weight:700}
+@media(max-width:500px){.premiumchart{height:260px!important;padding-left:9px!important;padding-right:9px!important}.chartaxis{width:38px;flex-basis:38px;font-size:8px}.chartplot{gap:4px}.chartplot .bar{width:78%;max-width:38px}}
+
+/* Compact header on internal pages: mascot stays visible but does not push content down. */
+.compact-head .sitehead{min-height:245px;padding-top:12px}
+.compact-head .sitehead .top{min-height:210px}
+.compact-head .brand{font-size:38px}
+.compact-head .sitehead .sub{font-size:15px}
+.compact-head .mascotwrap{top:-24px;right:0;width:205px;height:180px}
+.compact-head .mascot{width:225px}
+.compact-head .sitehead .iconbtn{top:2px;right:0;width:50px;height:50px}
+@media(max-width:500px){
+ .compact-head .sitehead{min-height:245px}
+ .compact-head .sitehead .top{min-height:210px}
+ .compact-head .brand{font-size:37px}
+ .compact-head .mascotwrap{top:-18px;right:-3px;width:190px;height:165px}
+ .compact-head .mascot{width:210px}
+}
 </style>
 </head>
 <body>
@@ -236,7 +263,7 @@ function updateHeader(){
 
 function resetView(){ window.scrollTo(0,0); }
 
-function setActive(n){document.querySelectorAll(".nav").forEach(x=>x.classList.remove("on"));$("n"+n).classList.add("on")}
+function setActive(n){document.querySelectorAll(".nav").forEach(x=>x.classList.remove("on"));$("n"+n).classList.add("on");document.body.classList.toggle("compact-head",n!==0)}
 
 function due(i,n){
  const x=new Date(i.start+"T12:00:00");
@@ -262,7 +289,7 @@ function pending(){
 }
 
 function home(){
- resetView();
+ resetView(); document.body.classList.remove("compact-head");
  setActive(0);
  $("main").innerHTML=`
  <div id="rem"></div>
@@ -303,9 +330,23 @@ function renderNext(){
 }
 function renderChart(){
  const a=[];
- for(let k=5;k>=0;k--){const x=new Date();x.setMonth(x.getMonth()-k);const key=x.toISOString().slice(0,7),v=d.tx.filter(t=>t.type==="e"&&t.date.slice(0,7)===key).reduce((s,t)=>s+Number(t.a),0);a.push({l:x.toLocaleDateString("es-PY",{month:"short"}),v})}
- const mx=Math.max(1,...a.map(x=>x.v));
- $("chart").innerHTML=a.map(x=>`<div class="barw"><div class="bar" style="height:${Math.max(5,x.v/mx*112)}px"></div><small>${x.l}</small></div>`).join("");
+ for(let k=5;k>=0;k--){
+  const x=new Date();x.setMonth(x.getMonth()-k);
+  const key=x.toISOString().slice(0,7);
+  const v=d.tx.filter(t=>t.type==="e"&&t.date.slice(0,7)===key).reduce((sum,t)=>sum+Number(t.a),0);
+  a.push({l:x.toLocaleDateString("es-PY",{month:"short"}),v});
+ }
+ const MAX=2000000;
+ const labels=[2000000,1800000,1600000,1400000,1200000,1000000,800000,600000,400000,200000,0];
+ const fmtAxis=n=>n===0?"0":n>=1000000?(n/1000000).toFixed(n%1000000?1:0)+"M":(n/1000)+"k";
+ const fmtShort=n=>n>=1000000?(n/1000000).toFixed(n%1000000?1:0)+"M":Math.round(n/1000)+"k";
+ $("chart").innerHTML=`<div class="chartaxis">${labels.map(n=>`<span>${fmtAxis(n)}</span>`).join("")}</div><div class="chartplot">${a.map(x=>{
+   const pct=Math.min(100,(x.v/MAX)*100);
+   const height=Math.max(2,pct);
+   const over=x.v>MAX;
+   const label=over?"2M+":fmtShort(x.v);
+   return `<div class="barw"><div class="bar ${over?"over":""}" style="height:${height}%"><span class="chartvalue">${label}</span></div><small>${x.l}</small></div>`;
+ }).join("")}</div>`;
 }
 function txRow(x){
  return `<div class="row" onclick="editTx('${x.id}')"><i class="dot ${x.type==="e"?"r":""}"></i><div class="main"><b>${esc(x.desc||x.cat)}</b><small>${esc(x.cat)} · ${new Date(x.date+"T12:00:00").toLocaleDateString("es-PY")}</small></div><span class="amt ${x.type==="e"?"red":"green"}">${x.type==="e"?"-":"+"}${money(x.a)}</span></div>`;
@@ -358,8 +399,8 @@ function filterHistory(){
 function instPage(){
  resetView();
  setActive(2);
- $("main").innerHTML=`<div class="head"><h2>Pagos</h2><button class="link" onclick="subModal()">＋ Mensualidad</button></div>
- <div class="tabs"><button class="tab on" onclick="instPage()">Cuotas con fin</button><button class="tab" onclick="showSubs()">Mensualidades</button><button class="tab" onclick="calendarPage()">Calendario</button></div>
+ $("main").innerHTML=`<div class="head"><h2>Pagos</h2><button class="link" onclick="instModal()">＋ Cuota</button></div>
+ <div class="tabs"><button class="tab on" onclick="instPage()">Cuotas</button><button class="tab" onclick="showSubs()">Mensualidades</button><button class="tab" onclick="calendarPage()">Calendario</button></div>
  <div id="ilist" class="list"></div>`;
  const a=d.ins;
  $("ilist").innerHTML=a.length?a.map(i=>{
