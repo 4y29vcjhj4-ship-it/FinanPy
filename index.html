@@ -227,6 +227,45 @@ body{overflow-x:hidden}
 #subs:empty{
   min-height:0 !important;
 }
+
+/* Ajuste solicitado: solo capibara + saldo + eliminación de gráficos */
+@media (max-width:500px){
+  .sitehead{
+    min-height:285px !important;
+    padding-top:24px !important;
+  }
+  .sitehead .top{
+    min-height:92px !important;
+    align-items:flex-start !important;
+  }
+  .brandblock{
+    max-width:52% !important;
+  }
+  .brand{
+    font-size:36px !important;
+    line-height:1 !important;
+  }
+  .mascotwrap{
+    right:2px !important;
+    top:8px !important;
+    width:125px !important;
+    height:92px !important;
+    overflow:hidden !important;
+  }
+  .mascot{
+    width:132px !important;
+    max-width:none !important;
+  }
+  .homebalance{
+    margin-top:0 !important;
+    z-index:6 !important;
+  }
+}
+@media (max-width:380px){
+  .brand{font-size:33px !important}
+  .mascotwrap{width:112px !important;height:84px !important}
+  .mascot{width:119px !important}
+}
 </style>
 </head>
 <body>
@@ -343,10 +382,8 @@ function home(){
  </section>
  <section class="sectionhead"><h2>Próximo pago</h2><button class="link" onclick="instPage()">Ver todo <b>›</b></button></section>
  <div id="next"></div>
- <section class="sectionhead"><h2>Esta semana</h2><button class="monthpicker" onclick="analyticsPage()">Ver análisis <b>›</b></button></section>
- <div class="card chart premiumchart" id="chart"></div>
- <section class="sectionhead"><h2>Resumen mensual</h2></section>
- <div class="card chart premiumchart monthly-summary-chart" id="monthlyChart"></div>
+ 
+ 
  <section class="sectionhead"><h2>Gastos por categoría</h2><button class="link" onclick="analyticsPage()">Ver más <b>›</b></button></section>
  <div class="card categoryempty" id="catpreview"></div>
  <section class="sectionhead"><h2>Últimos movimientos</h2><button class="link" onclick="historyPage()">Ver todo <b>›</b></button></section>
@@ -385,7 +422,7 @@ function balanceAt(dateKey){
     return sum;
   },0);
 }
-function renderChart(){
+function renderChart(){ if(!$("chart") && !$("monthlyChart")) return;
   const now=new Date();
   const day=now.getDay();
   const mondayOffset=day===0?-6:1-day;
