@@ -44,11 +44,63 @@ input,select{width:100%;padding:13px;border:1px solid var(--l);border-radius:12p
 .notice{border-left:4px solid var(--g);padding:10px 12px;background:var(--card);border-radius:10px;margin:8px 0}
 .install-card{padding:14px;border:1px solid var(--l);border-radius:17px;background:var(--card)}
 @media(max-width:380px){.grid3{grid-template-columns:1fr 1fr}}
+
+/* Evolution 2 */
+.e2grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.e2card{background:var(--card);border:1px solid var(--l);border-radius:17px;padding:14px;box-shadow:var(--shadow)}
+.statbig{font-size:24px;font-weight:850;margin-top:4px}.trend{font-size:12px;font-weight:750}.trend.up{color:var(--r)}.trend.down{color:var(--g)}
+.cardbrand{display:flex;justify-content:space-between;align-items:center}.ccnum{font-size:17px;letter-spacing:2px;margin:15px 0}.ccfoot{display:flex;justify-content:space-between;font-size:12px;color:var(--m)}
+.analysisbar{height:12px;background:var(--l);border-radius:99px;overflow:hidden;margin-top:8px}.analysisbar i{display:block;height:100%;background:var(--g);border-radius:99px}
+.syncbox{border:1px solid #9ed9c6;background:#eaf8f3;border-radius:15px;padding:13px}.dark .syncbox{background:#17382d}
+.warning{border-left:4px solid var(--y);background:#fff8e5;color:#6b5000;padding:12px;border-radius:10px}.dark .warning{background:#302a19;color:#f1d37d}
+.smallbtn{padding:9px 11px;border-radius:10px;border:1px solid var(--l);background:var(--card);color:var(--t);font-weight:750}
+
+/* FinanPY Premium visual refresh */
+:root{
+ --g:#126b52;--g2:#0e8062;--bg:#f7f7f5;--card:#fff;--t:#17201c;--m:#7a837e;--l:#e6e9e6;
+ --r:#c94848;--y:#9a6a10;--shadow:0 3px 18px rgba(20,35,29,.06)
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",sans-serif;letter-spacing:-.01em}
+header{background:var(--bg);color:var(--t);box-shadow:none;border-radius:0;padding:18px 16px 8px}
+header .sub{color:var(--m)}
+.top{align-items:center}.brand{font-size:25px;letter-spacing:-.8px}.iconbtn{background:var(--card);color:var(--t);border:1px solid var(--l);box-shadow:var(--shadow)}
+.balance{margin-top:25px}.balance small{font-size:13px}.balance h1{font-size:40px;letter-spacing:-1.6px;margin:5px 0 0}
+.cards{gap:10px}.card{box-shadow:none;border-color:var(--l);border-radius:18px}.card b{font-size:17px}
+.wrap{padding:14px 16px;max-width:720px}
+h2{font-size:20px;letter-spacing:-.4px}.head h2{margin:20px 0 11px}
+.up,.row,.e2card,.install-card{box-shadow:none;border-color:var(--l);border-radius:17px}
+.row{min-height:68px;padding:13px 14px}.dot{width:9px;height:9px;flex-basis:9px}
+.btn{background:var(--g);border-radius:13px;box-shadow:none;font-weight:750}
+.link{color:var(--g)}
+.fab{width:56px;height:56px;right:17px;bottom:79px;background:var(--g);box-shadow:0 8px 18px rgba(18,107,82,.24)}
+nav{background:rgba(255,255,255,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid rgba(0,0,0,.07)}
+.nav{font-size:10px;font-weight:650}.nav b{font-size:19px;font-weight:500}
+input,select{background:var(--card);border-color:var(--l);border-radius:12px}
+.hero{background:linear-gradient(145deg,#126b52,#0e5c48);border-radius:19px;box-shadow:none}
+.badge{background:#eaf3ef;color:var(--g)}
+.chart{box-shadow:none}
+.section{margin-top:22px}
+.empty{padding:34px 12px}
+body.dark{--bg:#111613;--card:#191e1b;--t:#edf2ef;--m:#98a29c;--l:#2a312d}
+body.dark header{background:var(--bg);color:var(--t)}
+body.dark nav{background:rgba(25,30,27,.94);border-top-color:#303632}
+body.dark .iconbtn{background:var(--card);color:var(--t)}
+body.dark .badge{background:#20362d}
+body.dark .calday.pay{background:#19362c}
+
+/* Home shortcuts */
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:18px}
+.quickitem{border:1px solid var(--l);background:var(--card);border-radius:17px;padding:12px 6px 10px;text-align:center;color:var(--t);font-size:11px;font-weight:700}
+.quickicon{width:39px;height:39px;margin:0 auto 7px;border-radius:12px;display:grid;place-items:center;background:#edf5f1;color:var(--g);font-size:19px;font-weight:500}
+.quickitem:active{transform:scale(.98)}
+.dark .quickicon{background:#20372f}
+
+/* More polished iconography without external libraries */
+.fi{display:inline-grid;place-items:center;width:1.15em;height:1.15em;vertical-align:-.12em}
 </style>
 </head>
 <body>
 <header>
- <div class="top"><div><div class="brand">FinanPY</div><div class="sub">Tus finanzas, en guaraníes 🇵🇾</div></div><button class="iconbtn" onclick="toggleDark()">☾</button></div>
+ <div class="top"><div><div class="brand">FinanPY</div><div class="sub">Tu dinero, más claro.</div></div><button class="iconbtn" onclick="toggleDark()">☾</button></div>
  <div class="balance"><small>Saldo disponible</small><h1 id="bal">G. 0</h1></div>
  <div class="cards"><div class="card"><small>Ingresos del mes</small><b class="green" id="inc">G. 0</b></div><div class="card"><small>Gastos del mes</small><b class="red" id="exp">G. 0</b></div></div>
 </header>
@@ -57,8 +109,8 @@ input,select{width:100%;padding:13px;border:1px solid var(--l);border-radius:12p
 <nav>
  <button class="nav on" id="n0" onclick="home()"><b>⌂</b>Inicio</button>
  <button class="nav" id="n1" onclick="historyPage()"><b>↕</b>Movimientos</button>
- <button class="nav" id="n2" onclick="instPage()"><b>▣</b>Cuotas</button>
- <button class="nav" id="n3" onclick="settings()"><b>⚙</b>Ajustes</button>
+ <button class="nav" id="n2" onclick="instPage()"><b>▤</b>Pagos</button>
+ <button class="nav" id="n3" onclick="settings()"><b>⚙</b>Más</button>
 </nav>
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
 
@@ -73,9 +125,9 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 function load(){
  try{
   const old=JSON.parse(localStorage.getItem(KEY)||"null");
-  if(old){old.subs=old.subs||[];old.goals=old.goals||[];old.cards=old.cards||[];old.settings=old.settings||{reminders:true,face:false};return old;}
+  if(old){old.subs=old.subs||[];old.goals=old.goals||[];old.cards=old.cards||[];old.settings=old.settings||{reminders:true,face:false,notify:false};old.profile=old.profile||{name:"",currency:"PYG"};return old;}
   const legacy=JSON.parse(localStorage.getItem("finanpy")||"null");
-  if(legacy){legacy.subs=legacy.subs||[];legacy.goals=legacy.goals||[];legacy.cards=legacy.cards||[];legacy.settings=legacy.settings||{reminders:true,face:false};localStorage.setItem(KEY,JSON.stringify(legacy));return legacy}
+  if(legacy){legacy.subs=legacy.subs||[];legacy.goals=legacy.goals||[];legacy.cards=legacy.cards||[];legacy.settings=legacy.settings||{reminders:true,face:false,notify:false};legacy.profile=legacy.profile||{name:"",currency:"PYG"};localStorage.setItem(KEY,JSON.stringify(legacy));return legacy}
  }catch(e){}
  return {tx:[],ins:[],dark:false,budget:0,subs:[],goals:[],cards:[],settings:{reminders:true,face:false}};
 }
@@ -120,9 +172,15 @@ function home(){
  setActive(0);
  $("main").innerHTML=`
  <div id="rem"></div>
- <div class="head"><h2>Próximo pago</h2><button class="link" onclick="instPage()">Ver cuotas</button></div>
+ <div class="quick">
+  <button class="quickitem" onclick="txModal()"><div class="quickicon">＋</div>Movimiento</button>
+  <button class="quickitem" onclick="instModal()"><div class="quickicon">▣</div>Cuota</button>
+  <button class="quickitem" onclick="subModal()"><div class="quickicon">↻</div>Mensualidad</button>
+  <button class="quickitem" onclick="goalModal()"><div class="quickicon">◎</div>Meta</button>
+ </div>
+ <div class="head"><h2>Próximo pago</h2><button class="link" onclick="instPage()">Ver todo</button></div>
  <div id="next"></div>
- <div class="head"><h2>Resumen</h2></div>
+ <div class="head"><h2>Este mes</h2></div>
  <div class="card chart" id="chart"></div>
  <div class="head"><h2>Últimos movimientos</h2><button class="link" onclick="historyPage()">Ver todo</button></div>
  <div id="recent" class="list"></div>`;
@@ -312,6 +370,75 @@ function faceID(){
  }).catch(()=>alert("No se pudo comprobar Face ID en este navegador."));
 }
 
+
+function creditCardModal(id){
+ const c=id?d.cards.find(x=>x.id===id):null;
+ $("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>${c?"Editar":"Nueva"} tarjeta</h2>
+ <label>Nombre</label><input id="cn" placeholder="Ej. Visa Banco X" value="${c?esc(c.name):""}">
+ <label>Últimos 4 dígitos</label><input id="cl" inputmode="numeric" maxlength="4" placeholder="1234" value="${c?esc(c.last4):""}">
+ <label>Límite (G.)</label><input id="clim" type="number" inputmode="numeric" value="${c?c.limit:""}">
+ <label>Cierre</label><input id="cclose" type="number" min="1" max="31" value="${c?c.close:15}">
+ <label>Vencimiento</label><input id="cdue" type="number" min="1" max="31" value="${c?c.due:5}">
+ <button class="btn" onclick="saveCard('${id||""}')">Guardar tarjeta</button>
+ ${c?`<button class="btn danger" onclick="deleteCard('${c.id}')">Eliminar tarjeta</button>`:""}`;
+ $("modal").classList.add("on");
+}
+function saveCard(id){
+ const name=$("cn").value.trim(),last4=$("cl").value.trim(),limit=Number($("clim").value),close=Number($("cclose").value),duev=Number($("cdue").value);
+ if(!name||!limit)return alert("Completá nombre y límite");
+ const x={id:id||uid(),name,last4,limit,close,due:duev,balance:0};
+ const idx=d.cards.findIndex(q=>q.id===id);if(idx>=0){x.balance=d.cards[idx].balance;d.cards[idx]=x}else d.cards.push(x);
+ persist();closeModal();cardsPage();
+}
+function deleteCard(id){if(confirm("¿Eliminar esta tarjeta?")){d.cards=d.cards.filter(x=>x.id!==id);persist();closeModal();cardsPage()}}
+function addCardCharge(id){
+ const c=d.cards.find(x=>x.id===id);if(!c)return;
+ const a=Number(prompt("Monto del consumo (G.)","50000"));if(!a||a<=0)return;
+ c.balance+=a;
+ d.tx.push({id:uid(),type:"e",a,date:today(),cat:"Tarjeta",desc:`${c.name} •••• ${c.last4||"----"}`});
+ persist();cardsPage();
+}
+function cardsPage(){
+ setActive(3);
+ $("main").innerHTML=`<div class="head"><h2>Tarjetas</h2><button class="link" onclick="creditCardModal()">＋ Nueva</button></div>
+ <div class="notice">Controlá límite, consumos y fechas de cierre/vencimiento. Los consumos registrados también aparecen en Movimientos.</div>
+ <div class="list">${d.cards.length?d.cards.map(c=>{
+   const used=Math.min(100,c.balance/c.limit*100);
+   return `<div class="e2card"><div class="cardbrand"><b>${esc(c.name)}</b><span class="badge">•••• ${esc(c.last4||"----")}</span></div>
+   <div class="ccnum">${money(c.balance)} usado</div><div class="analysisbar"><i style="width:${used}%"></i></div>
+   <div class="ccfoot"><span>Límite ${money(c.limit)}</span><span>Disponible ${money(Math.max(0,c.limit-c.balance))}</span></div>
+   <div class="ccfoot" style="margin-top:8px"><span>Cierre día ${c.close}</span><span>Vence día ${c.due}</span></div>
+   <div class="actions section"><button class="btn" onclick="addCardCharge('${c.id}')">＋ Consumo</button><button class="smallbtn" onclick="creditCardModal('${c.id}')">Editar</button></div></div>`;
+ }).join(""):`<div class="empty">Agregá tu primera tarjeta para controlar el límite y los consumos.</div>`}</div>`;
+}
+function analyticsPage(){
+ setActive(3);
+ const ym=today().slice(0,7), month=d.tx.filter(x=>x.date.slice(0,7)===ym);
+ const income=month.filter(x=>x.type==="i").reduce((s,x)=>s+Number(x.a),0);
+ const expense=month.filter(x=>x.type==="e").reduce((s,x)=>s+Number(x.a),0);
+ const by={};month.filter(x=>x.type==="e").forEach(x=>by[x.cat]=(by[x.cat]||0)+Number(x.a));
+ const cats=Object.entries(by).sort((a,b)=>b[1]-a[1]);
+ const top=cats[0], rate=income?expense/income*100:0;
+ $("main").innerHTML=`<div class="head"><h2>Análisis</h2><button class="link" onclick="home()">Inicio</button></div>
+ <div class="e2grid"><div class="e2card"><small>Ingresos</small><div class="statbig green">${money(income)}</div></div><div class="e2card"><small>Gastos</small><div class="statbig red">${money(expense)}</div></div></div>
+ <div class="hero"><small style="color:#d5eee5">Balance del mes</small><h3>${money(income-expense)}</h3><p>${rate?`Tus gastos representan ${rate.toFixed(0)}% de tus ingresos.`:"Todavía no hay ingresos este mes."}</p></div>
+ <div class="card section"><b>Gastos por categoría</b>${cats.length?cats.map(([k,v])=>`<div class="section"><div class="head"><span>${esc(k)}</span><b>${money(v)}</b></div><div class="analysisbar"><i style="width:${expense?v/expense*100:0}%"></i></div></div>`).join(""):`<div class="empty">Sin gastos este mes.</div>`}</div>
+ ${top?`<div class="card section"><b>Mayor categoría</b><p><span class="badge">${esc(top[0])}</span> ${money(top[1])}</p></div>`:""}
+ <div class="card section"><b>Recomendación</b><p><small>${d.budget&&expense>d.budget?"Superaste tu presupuesto mensual. Revisá las categorías con mayor gasto.":d.budget&&expense>d.budget*.8?"Ya usaste más del 80% de tu presupuesto.":"Vas dentro de tu presupuesto. Seguí registrando tus movimientos para obtener mejores análisis."}</small></p></div>`;
+}
+async function requestNotifications(){
+ if(!("Notification" in window))return alert("Safari no ofrece notificaciones web en este contexto.");
+ try{const p=await Notification.requestPermission();d.settings.notify=p==="granted";persist();settings();alert(p==="granted"?"Notificaciones permitidas. FinanPY podrá mostrar avisos mientras la app esté abierta.":"No se concedió permiso.");}
+ catch(e){alert("No se pudo solicitar el permiso de notificaciones.")}
+}
+function cloudSyncInfo(){
+ $("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>Sincronización</h2>
+ <div class="syncbox"><b>Estado actual: local</b><p><small>Tus datos están en este iPhone. Para sincronización real entre dispositivos hace falta una cuenta y una base de datos en la nube.</small></p></div>
+ <p><small>FinanPY ya tiene exportación/restauración JSON. No voy a simular una nube que todavía no existe.</small></p>
+ <button class="btn" onclick="exportData();closeModal()">Crear respaldo ahora</button>`;
+ $("modal").classList.add("on");
+}
+
 function settings(){
  setActive(3);
  const size=new Blob([JSON.stringify(d)]).size, ym=today().slice(0,7);
@@ -321,10 +448,13 @@ function settings(){
  <div class="hero"><h3>FinanPY Pro+ 🇵🇾</h3><p>Controlá gastos, cuotas, mensualidades, metas y respaldos desde un solo lugar.</p></div>
  <div class="card section"><b>Presupuesto mensual</b><p><small>Gastado: ${money(exp)}${d.budget?` · Disponible: ${money(rem)}`:""}</small></p><input id="budget" type="number" inputmode="numeric" value="${d.budget||""}" placeholder="Ej. 3000000"><button class="btn" onclick="saveBudget()">Guardar presupuesto</button></div>
  <div class="section"><div class="head"><h2>Metas de ahorro</h2><button class="link" onclick="goalModal()">＋ Nueva</button></div><div class="list">${d.goals.length?d.goals.map(g=>`<div class="mini goal"><div class="goalhead"><b>${esc(g.name)}</b><small>${money(g.saved)} / ${money(g.target)}</small></div><div class="progress"><i style="width:${Math.min(100,g.saved/g.target*100)}%"></i></div><button class="link" onclick="addGoalMoney('${g.id}')">＋ Agregar ahorro</button></div>`).join(""):`<div class="empty">Creá una meta como auto, viaje o emergencia.</div>`}</div></div>
+ <div class="card section"><b>Sincronización</b><p><small>Preparada para conectar una cuenta y sincronizar entre iPhone/iPad en una siguiente etapa.</small></p><button class="btn" onclick="cloudSyncInfo()">Ver estado de sincronización</button></div>
  <div class="card section"><b>Seguridad</b>
  <div class="switch"><span>Bloqueo biométrico / Face ID</span><button class="link" onclick="faceID()">Configurar</button></div>
- <div class="switch"><span>Recordatorios dentro de FinanPY</span><span class="badge">3 días antes</span></div></div>
- <div class="card section"><b>Copia de seguridad</b><p><small>${d.tx.length} movimientos · ${d.ins.length} cuotas · ${d.subs.length} mensualidades · ${d.goals.length} metas · ${Math.round(size/1024)} KB</small></p><div class="actions"><button class="btn" onclick="exportData()">⬇️ Exportar</button><button class="btn" onclick="importData()">⬆️ Restaurar</button></div></div>
+ <div class="switch"><span>Recordatorios dentro de FinanPY</span><span class="badge">3 días antes</span></div><div class="switch"><span>Permitir notificaciones</span><button class="link" onclick="requestNotifications()">Activar</button></div></div>
+ <div class="card section"><b>Herramientas</b><div class="actions"><button class="smallbtn" onclick="analyticsPage()">Análisis</button><button class="smallbtn" onclick="cardsPage()">Tarjetas</button></div></div>
+ <div class="card section"><b>Copia de seguridad</b><p><small>${d.tx.length} movimientos · ${d.ins.length} cuotas · ${d.subs.length} mensualidades · ${d.goals.length} metas · ${Math.round(size/1024)} KB</small></p><div class="actions"><button class="btn" onclick="exportData()">Exportar</button><button class="btn" onclick="importData()">Restaurar</button></div></div>
+ <div class="card section"><b>Acerca de FinanPY</b><p><small>Una forma simple de entender a dónde va tu dinero.</small></p></div>
  <div class="card section"><b>Datos</b><p><small>Los datos actuales están guardados localmente en este dispositivo.</small></p><button class="btn danger" onclick="wipe()">Borrar todos los datos</button></div>`;
 }
 function saveBudget(){d.budget=Number($("budget").value)||0;persist();settings()}
@@ -334,10 +464,10 @@ function exportData(){
 }
 function importData(){
  const input=document.createElement("input");input.type="file";input.accept=".json,application/json";
- input.onchange=()=>{const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.tx)||!Array.isArray(x.ins))throw 0;if(confirm("Esto reemplazará los datos actuales. ¿Continuar?")){d={tx:x.tx,ins:x.ins,subs:x.subs||[],goals:x.goals||[],cards:x.cards||[],settings:x.settings||{reminders:true,face:false},dark:!!x.dark,budget:Number(x.budget)||0};persist();home()}}catch(e){alert("El archivo no es un respaldo válido de FinanPY.")}};r.readAsText(f)};input.click();
+ input.onchange=()=>{const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.tx)||!Array.isArray(x.ins))throw 0;if(confirm("Esto reemplazará los datos actuales. ¿Continuar?")){d={tx:x.tx,ins:x.ins,subs:x.subs||[],goals:x.goals||[],cards:x.cards||[],settings:x.settings||{reminders:true,face:false,notify:false},profile:x.profile||{name:"",currency:"PYG"},dark:!!x.dark,budget:Number(x.budget)||0};persist();home()}}catch(e){alert("El archivo no es un respaldo válido de FinanPY.")}};r.readAsText(f)};input.click();
 }
 function toggleDark(){d.dark=!d.dark;document.body.classList.toggle("dark",d.dark);persist()}
-function wipe(){if(confirm("¿Borrar TODOS los datos de FinanPY? Esta acción no se puede deshacer.")){d={tx:[],ins:[],subs:[],goals:[],cards:[],settings:{reminders:true,face:false},dark:d.dark,budget:0};persist();home()}}
+function wipe(){if(confirm("¿Borrar TODOS los datos de FinanPY? Esta acción no se puede deshacer.")){d={tx:[],ins:[],subs:[],goals:[],cards:[],settings:{reminders:true,face:false,notify:false},profile:{name:"",currency:"PYG"},dark:d.dark,budget:0};persist();home()}}
 function closeModal(){$("modal").classList.remove("on")}
 $("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeModal()});
 updateHeader();home();
