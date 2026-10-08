@@ -105,7 +105,7 @@ body.dark .calday.pay{background:#19362c}
 .mascot{width:265px;height:auto;display:block;mix-blend-mode:screen;filter:saturate(1.04) contrast(1.03)}
 .sitehead .iconbtn{position:absolute;right:0;top:3px;z-index:4;width:54px;height:54px;border-radius:18px;background:#101b17;border:1px solid #26342e;color:#fff;font-size:24px}
 .wrap{padding:0 32px 120px;background:#08140f;max-width:760px}
-.homebalance{margin-top:-18px;position:relative;z-index:4;background:linear-gradient(135deg,rgba(8,94,68,.82),rgba(5,43,32,.9));border:1px solid rgba(0,205,137,.45);border-radius:25px;padding:22px 25px;box-shadow:0 12px 35px rgba(0,0,0,.18)}
+.homebalance{margin-top:-70px;position:relative;z-index:4;background:linear-gradient(135deg,rgba(8,94,68,.82),rgba(5,43,32,.9));border:1px solid rgba(0,205,137,.45);border-radius:25px;padding:22px 25px;box-shadow:0 12px 35px rgba(0,0,0,.18)}
 .balancehead{display:flex;justify-content:space-between;align-items:center}.homebalance small{font-size:15px;color:#c4d8d0}.homebalance h1{font-size:50px;margin:4px 0 0;letter-spacing:-2px;color:#f2f7f4}.balanceeye{border:1px solid #275045;background:#0d2119;color:#d9e8e2;width:50px;height:50px;border-radius:17px;font-size:21px}
 .monthcards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}.monthcard{display:flex;gap:13px;align-items:center;padding:19px;border-radius:22px;border:1px solid #1e322b;background:#0e1915}.monthcard small{display:block;color:#b5c0bb;font-size:14px}.monthcard b{display:block;font-size:26px;margin-top:3px}.monthcard span{display:block;color:#84918b;font-size:12px;margin-top:4px}.monthcard.income b{color:#0ed18f}.monthcard.expense b{color:#ff6868}.metricicon{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:24px}.income .metricicon{color:#0ed18f;background:rgba(14,209,143,.13);border:1px solid rgba(14,209,143,.25)}.expense .metricicon{color:#ff6868;background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.25)}
 .sectionhead{display:flex;align-items:center;justify-content:space-between;margin:30px 0 12px}.sectionhead h2{margin:0;font-size:27px;color:#eef4f0;letter-spacing:-1px}.sectionhead .link,.monthpicker{font-size:14px;font-weight:800;color:#0ed18f;background:none;border:0;padding:0}.monthpicker{color:#d4ded9;border:1px solid #293831;background:#101c18;padding:11px 14px;border-radius:17px}
@@ -118,6 +118,47 @@ body.dark{background:#08140f;color:#eef4f0}
 body.dark .sitehead,body.dark .wrap{background:#08140f}
 body.dark .monthcard,body.dark .nextpremium,body.dark .premiumchart,body.dark .categoryempty{background:#0e1915}
 @media(max-width:500px){.sitehead{padding-left:32px;padding-right:32px}.brand{font-size:43px}.mascotwrap{right:20px;width:205px}.mascot{width:235px}.wrap{padding-left:32px;padding-right:32px}.monthcards{gap:10px}.monthcard{padding:14px 11px}.metricicon{width:42px;height:42px;flex:0 0 42px}.monthcard b{font-size:22px}.monthcard small{font-size:12px}.sectionhead h2{font-size:25px}}
+
+/* FinanPY correction pack */
+html{scroll-behavior:auto}
+body{overflow-x:hidden}
+.modal{z-index:100}
+.bottomnav{z-index:50}
+.homebalance h1,.monthcard b,.payamount,.amt,.kpis b{white-space:nowrap;overflow:hidden;text-overflow:clip}
+.homebalance h1{font-size:50px;line-height:1.02;max-width:100%}
+.monthcard b{font-size:24px;line-height:1.05}
+.payamount{flex:0 1 auto;min-width:0;font-size:20px}
+.moneyfit{display:block;white-space:nowrap;line-height:1;letter-spacing:-.045em}
+.monthcard{min-width:0}
+.monthcard>div:last-child{min-width:0}
+.monthcard b{max-width:100%}
+.nextpremium .paymain{min-width:0;flex:1}
+.nextpremium .paymain b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sectionhead{min-width:0}
+.sitehead{position:relative;overflow:visible;min-height:390px}
+.sitehead .top{position:relative;z-index:4}
+.brandblock{position:relative;z-index:5}
+.mascotwrap{z-index:2;pointer-events:none}
+@media(max-width:500px){
+ .sitehead{min-height:390px;padding-top:32px}
+ .brand{font-size:42px}
+ .brandblock{max-width:58%}
+ .mascotwrap{right:0;top:-2px;width:245px;height:250px}
+ .mascot{width:285px}
+ .homebalance{margin-top:-165px;z-index:6}
+ .wrap{position:relative;z-index:3}
+ .monthcard b{font-size:23px}
+}
+@media(max-width:380px){
+ .sitehead{min-height:365px}
+ .brand{font-size:36px}
+ .mascotwrap{width:215px;height:225px}
+ .mascot{width:250px}
+ .homebalance{margin-top:-145px}
+}
+
+.sheet{padding-bottom:calc(36px + env(safe-area-inset-bottom))}
+.sheet .btn:last-child{margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -159,6 +200,29 @@ let d=load();
 if(d.dark)document.body.classList.add("dark");
 
 function persist(){localStorage.setItem(KEY,JSON.stringify(d));updateHeader()}
+
+function fitMoney(){
+  const selectors=["#bal","#inc","#exp",".payamount",".amt",".kpis b"];
+  const nodes=[...new Set(selectors.flatMap(s=>[...document.querySelectorAll(s)]))];
+  nodes.forEach(el=>{
+    if(!el || !el.textContent.trim()) return;
+    el.classList.add("moneyfit");
+    const isBalance=el.id==="bal";
+    const isCard=el.id==="inc"||el.id==="exp";
+    let size=isBalance?50:(isCard?24:20);
+    const min=isBalance?22:(isCard?13:12);
+    el.style.fontSize=size+"px";
+    el.style.whiteSpace="nowrap";
+    el.style.display="block";
+    let guard=0;
+    while(el.scrollWidth>el.clientWidth+1 && size>min && guard++<40){
+      size-=1;
+      el.style.fontSize=size+"px";
+    }
+  });
+}
+window.addEventListener("resize",fitMoney);
+
 function updateHeader(){
  const bal=d.tx.reduce((s,x)=>s+(x.type==="i"?Number(x.a):-Number(x.a)),0);
  const ym=today().slice(0,7);
@@ -168,6 +232,9 @@ function updateHeader(){
  const im=d.tx.filter(x=>x.type==="i"&&x.date.slice(0,7)===ym).length, em=d.tx.filter(x=>x.type==="e"&&x.date.slice(0,7)===ym).length;
  if($("incn"))$("incn").textContent=`${im} ${im===1?"movimiento":"movimientos"}`; if($("expn"))$("expn").textContent=`${em} ${em===1?"movimiento":"movimientos"}`;
 }
+
+
+function resetView(){ window.scrollTo(0,0); }
 
 function setActive(n){document.querySelectorAll(".nav").forEach(x=>x.classList.remove("on"));$("n"+n).classList.add("on")}
 
@@ -195,8 +262,10 @@ function pending(){
 }
 
 function home(){
+ resetView();
  setActive(0);
  $("main").innerHTML=`
+ <div id="rem"></div>
  <section class="homebalance">
   <div class="balancehead"><div><small>Saldo disponible</small><h1 id="bal">G. 0</h1></div><button class="balanceeye" onclick="toggleBalance()" aria-label="Ocultar saldo">◉</button></div>
  </section>
@@ -212,7 +281,7 @@ function home(){
  <div class="card categoryempty" id="catpreview"></div>
  <section class="sectionhead"><h2>Últimos movimientos</h2><button class="link" onclick="historyPage()">Ver todo <b>›</b></button></section>
  <div id="recent" class="list"></div>`;
- updateHeader();renderReminder();renderNext();renderChart();renderCategoryPreview();renderRecent();
+ updateHeader();renderReminder();renderNext();renderChart();renderCategoryPreview();renderRecent();requestAnimationFrame(fitMoney);
 }
 function toggleBalance(){
  const b=$("bal"); if(!b)return;
@@ -226,7 +295,7 @@ function renderCategoryPreview(){
 }
 function renderReminder(){
  const dueSoon=pending().filter(x=>x.days>=0&&x.days<=3); const ym=today().slice(0,7); d.subs.forEach(s=>{const q=subscriptionNext(s),days=daysUntil(q);if(days>=0&&days<=3&&!(s.paid||[]).includes(ym))dueSoon.push({i:{name:s.name,count:"∞",amount:s.amount},n:0,q,days});});
- $("rem").innerHTML=dueSoon.length?`<div class="alert"><b>🔔 Próximos vencimientos</b><br><small>${dueSoon.slice(0,2).map(x=>`${esc(x.i.name)} · cuota ${x.n+1}/${x.i.count} · ${x.days===0?"vence hoy":x.days===1?"vence mañana":"vence en "+x.days+" días"}`).join("<br>")}</small></div>`:"";
+ if(!$("rem")) return; $("rem").innerHTML=dueSoon.length?`<div class="alert"><b>🔔 Próximos vencimientos</b><br><small>${dueSoon.slice(0,2).map(x=>`${esc(x.i.name)} · cuota ${x.n+1}/${x.i.count} · ${x.days===0?"vence hoy":x.days===1?"vence mañana":"vence en "+x.days+" días"}`).join("<br>")}</small></div>`:"";
 }
 function renderNext(){
  const x=pending().find(x=>x.days>=0);
@@ -256,7 +325,7 @@ function txModal(x){
  <button class="btn" onclick="saveTx('${x?x.id:""}')">Guardar</button>
  ${x?`<button class="btn danger" onclick="deleteTx('${x.id}')">Eliminar</button>`:""}`;
  if(x){$("ft").value=x.type;$("fa").value=x.a;$("fc").value=x.cat;$("fx").value=x.desc||""}
- $("modal").classList.add("on");
+ $("modal").classList.add("on"); requestAnimationFrame(fitMoney);
 }
 function saveTx(id){
  const a=Number($("fa").value);
@@ -271,12 +340,13 @@ function deleteTx(id){if(confirm("¿Eliminar este movimiento?")){d.tx=d.tx.filte
 
 let ftype="a";
 function historyPage(){
+ resetView();
  setActive(1);
  $("main").innerHTML=`<div class="head"><h2>Movimientos</h2><button class="link" onclick="txModal()">＋ Agregar</button></div>
  <input id="search" placeholder="🔎 Buscar movimiento..." oninput="filterHistory()">
  <div class="tabs"><button class="tab on" onclick="filterType('a',this)">Todos</button><button class="tab" onclick="filterType('i',this)">Ingresos</button><button class="tab" onclick="filterType('e',this)">Gastos</button></div>
  <div id="hist" class="list"></div>`;
- ftype="a";filterHistory();
+ ftype="a";filterHistory();requestAnimationFrame(fitMoney);
 }
 function filterType(t,b){ftype=t;document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");filterHistory()}
 function filterHistory(){
@@ -286,6 +356,7 @@ function filterHistory(){
 }
 
 function instPage(){
+ resetView();
  setActive(2);
  $("main").innerHTML=`<div class="head"><h2>Pagos</h2><button class="link" onclick="subModal()">＋ Mensualidad</button></div>
  <div class="tabs"><button class="tab on" onclick="instPage()">Cuotas con fin</button><button class="tab" onclick="showSubs()">Mensualidades</button><button class="tab" onclick="calendarPage()">Calendario</button></div>
@@ -295,16 +366,17 @@ function instPage(){
   const p=(i.paid||[]).length,n=Array.from({length:i.count},(_,j)=>j).find(j=>!(i.paid||[]).some(v=>v===j||v.n===j));
   const q=n===undefined?null:due(i,n);
   return `<div class="row" onclick="openInst('${i.id}')"><div class="main"><b>${esc(i.name)}</b><small>${p}/${i.count} pagadas${q?" · Próxima "+new Date(q+"T12:00:00").toLocaleDateString("es-PY"):" · Completada"}</small></div><b>${money(i.amount)}</b></div>`;
- }).join(""):`<div class="empty">No tenés cuotas con cantidad definida.</div>`;
+ }).join(""):`<div class="empty">No tenés cuotas con cantidad definida.</div>`;requestAnimationFrame(fitMoney);
 }
 function showSubs(){
+ resetView();
  setActive(2);
  $("main").innerHTML=`<div class="head"><h2>Mensualidades</h2><button class="link" onclick="subModal()">＋ Nueva</button></div>
  <div class="notice">Estas no usan formato 1/10. Se renuevan cada mes hasta que vos las elimines.</div><div id="subs" class="list"></div>`;
  $("subs").innerHTML=d.subs.length?d.subs.map(s=>{
   const q=subscriptionNext(s),key=today().slice(0,7),paid=(s.paid||[]).includes(key);
   return `<div class="install-card"><div class="head"><div><b>${esc(s.name)}</b><small>${esc(s.cat)} · día ${s.day} de cada mes</small></div><b>${money(s.amount)}</b></div><div class="section"><span class="badge">${paid?"✓ Pagada este mes":"Pendiente este mes"}</span> <small>Próximo: ${new Date(q+"T12:00:00").toLocaleDateString("es-PY")}</small></div><div class="actions section"><button class="btn" onclick="subPay('${s.id}')">${paid?"Ya pagada":"Pagar este mes"}</button><button class="btn danger" onclick="deleteSub('${s.id}')">Eliminar</button></div></div>`;
- }).join(""):`<div class="empty">Agregá Wi‑Fi, Spotify, Netflix u otra mensualidad.</div>`;
+ }).join(""):`<div class="empty">Agregá Wi‑Fi, Spotify, Netflix u otra mensualidad.</div>`;requestAnimationFrame(fitMoney);
 }
 function instModal(){
  $("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>Nueva cuota</h2>
@@ -315,7 +387,7 @@ function instModal(){
  <label>Primer vencimiento</label><input id="is" type="date" value="${today()}">
  <label>Día de vencimiento mensual</label><input id="iday" type="number" min="1" max="31" value="${new Date().getDate()}">
  <button class="btn" onclick="saveInstallment()">Crear cuotas</button>`;
- $("modal").classList.add("on");
+ $("modal").classList.add("on"); requestAnimationFrame(fitMoney);
 }
 function calcInstallment(){const t=Number($("it").value)||0,c=Number($("ic").value)||1;$("ia").value=Math.round(t/c)}
 function saveInstallment(){
@@ -335,7 +407,7 @@ function openInst(id){
  <div class="section list">${rows}</div>
  ${n===undefined?"<div class='up' style='margin-top:10px'>✓ Cuota completada</div>":`<button class="btn" onclick="payInstallment('${id}',${n})">Marcar cuota ${n+1} como pagada · ${money(i.amount)}</button>`}
  <button class="btn danger" onclick="deleteInstallment('${id}')">Eliminar cuota</button>`;
- $("modal").classList.add("on");
+ $("modal").classList.add("on"); requestAnimationFrame(fitMoney);
 }
 function payInstallment(id,n){
  const i=d.ins.find(x=>x.id===id);if(!i)return;
@@ -391,6 +463,7 @@ function goalModal(){
 function saveGoal(){const n=$("gn").value.trim(),a=Number($("ga").value),s=Number($("gs").value)||0;if(!n||!a)return alert("Completá los datos");d.goals.push({id:uid(),name:n,target:a,saved:s});persist();closeModal();settings()}
 function addGoalMoney(id){const g=d.goals.find(x=>x.id===id);if(!g)return;const a=Number(prompt("¿Cuánto querés agregar a esta meta?","50000"));if(a>0){g.saved+=a;persist();settings()}}
 function calendarPage(){
+ resetView();
  setActive(2);
  const now=new Date(),y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0);
  let h=`<div class="head"><h2>Calendario</h2><button class="link" onclick="instPage()">Volver</button></div><div class="calendar">`;
@@ -449,6 +522,7 @@ function cardsPage(){
  }).join(""):`<div class="empty">Agregá tu primera tarjeta para controlar el límite y los consumos.</div>`}</div>`;
 }
 function analyticsPage(){
+ resetView();
  setActive(3);
  const ym=today().slice(0,7), month=d.tx.filter(x=>x.date.slice(0,7)===ym);
  const income=month.filter(x=>x.type==="i").reduce((s,x)=>s+Number(x.a),0);
@@ -477,6 +551,7 @@ function cloudSyncInfo(){
 }
 
 function settings(){
+ resetView();
  setActive(3);
  const size=new Blob([JSON.stringify(d)]).size, ym=today().slice(0,7);
  const exp=d.tx.filter(x=>x.type==="e"&&x.date.slice(0,7)===ym).reduce((s,x)=>s+Number(x.a),0);
