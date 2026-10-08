@@ -1,35 +1,258 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#087f5b"><title>FinanPY</title>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#087f5b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>FinanPY</title>
 <style>
-:root{--g:#087f5b;--bg:#f4f7f6;--card:#fff;--t:#17211d;--m:#718078;--l:#e1e9e4;--r:#d64545}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;padding-bottom:80px}header{background:linear-gradient(145deg,#087f5b,#064f3d);color:#fff;padding:20px 16px 24px;border-radius:0 0 25px 25px}.top{display:flex;justify-content:space-between}.brand{font-size:26px;font-weight:800}.sub,small{color:var(--m);font-size:12px}.sub{color:#d5eee5}.balance{margin-top:25px}.balance h1{margin:4px 0;font-size:36px}.wrap{max-width:700px;margin:auto;padding:15px}.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.card,.row,.up{background:var(--card);border:1px solid var(--l);border-radius:16px;padding:14px}.card b{display:block;font-size:18px;margin-top:5px}.green{color:var(--g)}.red{color:var(--r)}h2{font-size:18px;margin:20px 0 10px}.up{display:flex;justify-content:space-between}.list{display:grid;gap:9px}.row{display:flex;gap:10px;align-items:center}.dot{width:10px;height:10px;border-radius:50%;background:var(--g)}.dot.r{background:var(--r)}.main{flex:1;min-width:0}.main b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.amt{font-weight:800}.btn{border:0;background:var(--g);color:#fff;border-radius:12px;padding:13px 15px;font-weight:800}.link{border:0;background:none;color:var(--g);font-weight:700}.head{display:flex;justify-content:space-between;align-items:center}.chart{height:150px;display:flex;align-items:end;gap:8px}.barw{flex:1;text-align:center}.bar{background:var(--g);border-radius:7px 7px 2px 2px;min-height:4px}.barw small{display:block;margin-top:5px}.fab{position:fixed;right:18px;bottom:75px;width:58px;height:58px;border:0;border-radius:50%;background:var(--g);color:#fff;font-size:28px;z-index:5}nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--l);display:flex;justify-content:space-around;padding:9px 5px calc(9px + env(safe-area-inset-bottom));z-index:6}.nav{border:0;background:none;color:var(--m);font-size:11px}.nav b{display:block;font-size:20px}.nav.on{color:var(--g)}input,select{width:100%;padding:13px;border:1px solid var(--l);border-radius:12px;background:var(--bg);color:var(--t);font-size:16px;margin:5px 0 12px}label{font-size:12px;font-weight:700;color:var(--m)}.modal{display:none;position:fixed;inset:0;background:#0007;align-items:end;z-index:10}.modal.on{display:flex}.sheet{background:var(--card);width:100%;max-height:90vh;overflow:auto;border-radius:24px 24px 0 0;padding:18px}.danger{background:#fff0f0;color:var(--r);margin-top:8px}.tabs{display:flex;gap:7px;margin-bottom:10px}.tab{padding:8px 12px;border-radius:18px;border:1px solid var(--l);background:var(--card)}.tab.on{background:var(--g);color:#fff}.empty{text-align:center;color:var(--m);padding:25px}.dark{--bg:#101512;--card:#18201c;--t:#edf5f1;--m:#9aa9a1;--l:#2a3731}.dark .danger{background:#321b1b}
-</style></head><body>
-<header><div class="top"><div><div class="brand">FinanPY</div><div class="sub">Tus finanzas, en guaraníes 🇵🇾</div></div><button class="btn" style="padding:8px 11px" onclick="dark()">☾</button></div><div class="balance"><small style="color:#d5eee5">Saldo disponible</small><h1 id="bal">G. 0</h1></div><div class="cards"><div class="card"><small>Ingresos del mes</small><b class="green" id="inc">G. 0</b></div><div class="card"><small>Gastos del mes</small><b class="red" id="exp">G. 0</b></div></div></header>
-<main class="wrap" id="main"></main><button class="fab" onclick="txModal()">＋</button>
-<nav><button class="nav on" id="n0" onclick="home()"><b>⌂</b>Inicio</button><button class="nav" id="n1" onclick="historyPage()"><b>↕</b>Movimientos</button><button class="nav" id="n2" onclick="instPage()"><b>▣</b>Cuotas</button><button class="nav" id="n3" onclick="settings()"><b>⚙</b>Ajustes</button></nav>
+:root{--g:#087f5b;--g2:#0aa06f;--bg:#f4f7f6;--card:#fff;--t:#17211d;--m:#718078;--l:#dfe8e3;--r:#d64545;--y:#b77900;--shadow:0 8px 25px #17382b12}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding-bottom:88px}
+body.dark{--bg:#0e1411;--card:#18211c;--t:#edf5f1;--m:#9aaba2;--l:#2b3831;--shadow:0 8px 25px #0005}
+header{background:linear-gradient(145deg,#087f5b,#064f3d);color:#fff;padding:20px 16px 24px;border-radius:0 0 28px 28px;box-shadow:0 5px 20px #064f3d30}
+.top{display:flex;justify-content:space-between;align-items:center}.brand{font-size:27px;font-weight:850}.sub{color:#d5eee5;font-size:12px;margin-top:2px}.iconbtn{border:0;background:#ffffff20;color:#fff;border-radius:12px;width:42px;height:42px;font-size:20px}
+.balance{margin-top:23px}.balance small{color:#d5eee5}.balance h1{margin:3px 0;font-size:37px;letter-spacing:-1px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.card,.row,.up{background:var(--card);border:1px solid var(--l);border-radius:17px;padding:14px;box-shadow:var(--shadow)}
+.card b{display:block;font-size:18px;margin-top:5px}.green{color:var(--g)}.red{color:var(--r)}.gold{color:var(--y)}h2{font-size:19px;margin:20px 0 10px}
+.wrap{max-width:720px;margin:auto;padding:15px}.head{display:flex;justify-content:space-between;align-items:center}.head h2{margin-bottom:10px}
+.up{display:flex;justify-content:space-between;align-items:center;gap:12px}.up b{display:block}.list{display:grid;gap:9px}
+.row{display:flex;gap:11px;align-items:center;cursor:pointer}.dot{width:11px;height:11px;flex:0 0 11px;border-radius:50%;background:var(--g)}.dot.r{background:var(--r)}
+.main{flex:1;min-width:0}.main b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.main small{display:block;margin-top:3px}.amt{font-weight:850;white-space:nowrap}
+small{color:var(--m);font-size:12px}.btn{border:0;background:var(--g);color:#fff;border-radius:12px;padding:13px 15px;font-weight:800;font-size:15px}.btn:active,.fab:active{transform:scale(.98)}
+.link{border:0;background:none;color:var(--g);font-weight:800}.fab{position:fixed;right:18px;bottom:77px;width:59px;height:59px;border:0;border-radius:50%;background:var(--g);color:#fff;font-size:28px;z-index:5;box-shadow:0 8px 20px #087f5b40}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--l);display:flex;justify-content:space-around;padding:9px 5px calc(9px + env(safe-area-inset-bottom));z-index:6}
+.nav{border:0;background:none;color:var(--m);font-size:11px}.nav b{display:block;font-size:20px;margin-bottom:2px}.nav.on{color:var(--g)}
+input,select{width:100%;padding:13px;border:1px solid var(--l);border-radius:12px;background:var(--bg);color:var(--t);font-size:16px;margin:5px 0 12px}label{font-size:12px;font-weight:750;color:var(--m)}
+.modal{display:none;position:fixed;inset:0;background:#0008;align-items:flex-end;z-index:10}.modal.on{display:flex}.sheet{background:var(--card);width:100%;max-height:91vh;overflow:auto;border-radius:25px 25px 0 0;padding:18px 18px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -10px 35px #0002}
+.sheet h2{margin-top:2px}.sheet .btn{width:100%;margin-top:7px}.danger{background:#fff0f0;color:var(--r)}body.dark .danger{background:#321b1b}
+.close{float:right;border:0;background:var(--bg);color:var(--t);width:36px;height:36px;border-radius:50%;font-size:20px}.tabs{display:flex;gap:7px;margin-bottom:10px;overflow:auto}.tab{white-space:nowrap;padding:8px 12px;border-radius:18px;border:1px solid var(--l);background:var(--card);color:var(--t)}.tab.on{background:var(--g);color:#fff}
+.empty{text-align:center;color:var(--m);padding:28px 12px}.chart{height:180px;display:flex;align-items:end;gap:8px;padding-top:22px}.barw{flex:1;text-align:center;min-width:0}.bar{background:linear-gradient(#0aa06f,#087f5b);border-radius:7px 7px 2px 2px;min-height:4px}.barw small{display:block;margin-top:6px;font-size:10px}.section{margin-top:18px}
+.alert{background:#fff7df;border:1px solid #f0d18a;color:#6d5000;border-radius:15px;padding:13px}.dark .alert{background:#302a19;color:#f2d37b;border-color:#5c4d27}
+.progress{height:9px;background:var(--l);border-radius:99px;overflow:hidden;margin-top:9px}.progress i{display:block;height:100%;background:var(--g);border-radius:99px}.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.muted{color:var(--m)}
+</style>
+</head>
+<body>
+<header>
+ <div class="top"><div><div class="brand">FinanPY</div><div class="sub">Tus finanzas, en guaraníes 🇵🇾</div></div><button class="iconbtn" onclick="toggleDark()">☾</button></div>
+ <div class="balance"><small>Saldo disponible</small><h1 id="bal">G. 0</h1></div>
+ <div class="cards"><div class="card"><small>Ingresos del mes</small><b class="green" id="inc">G. 0</b></div><div class="card"><small>Gastos del mes</small><b class="red" id="exp">G. 0</b></div></div>
+</header>
+<main class="wrap" id="main"></main>
+<button class="fab" onclick="txModal()">＋</button>
+<nav>
+ <button class="nav on" id="n0" onclick="home()"><b>⌂</b>Inicio</button>
+ <button class="nav" id="n1" onclick="historyPage()"><b>↕</b>Movimientos</button>
+ <button class="nav" id="n2" onclick="instPage()"><b>▣</b>Cuotas</button>
+ <button class="nav" id="n3" onclick="settings()"><b>⚙</b>Ajustes</button>
+</nav>
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
 <script>
 const $=id=>document.getElementById(id);
-const K='finanpy';let d=JSON.parse(localStorage.getItem(K)||'{"tx":[],"ins":[],"dark":false}');if(d.dark)document.body.classList.add('dark');
-const M=n=>'G. '+Math.round(+n||0).toLocaleString('es-PY'),T=()=>new Date().toISOString().slice(0,10),save=()=>{localStorage.setItem(K,JSON.stringify(d));render()},esc=s=>String(s||'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
-function due(i,n){let x=new Date(i.start+'T12:00');x.setMonth(x.getMonth()+n);x.setDate(Math.min(i.day,new Date(x.getFullYear(),x.getMonth()+1,0).getDate()));return x.toISOString().slice(0,10)}
-function render(){let b=d.tx.reduce((s,x)=>s+(x.type=='i'?+x.a:-+x.a),0),m=T().slice(0,7),i=d.tx.filter(x=>x.type=='i'&&x.date.slice(0,7)==m).reduce((s,x)=>s+ +x.a,0),e=d.tx.filter(x=>x.type=='e'&&x.date.slice(0,7)==m).reduce((s,x)=>s+ +x.a,0);bal.textContent=M(b);inc.textContent=M(i);exp.textContent=M(e)}
-function home(){active(0);$('main').innerHTML='<div class="head"><h2>Próximo pago</h2><button class="link" onclick="instPage()">Ver cuotas</button></div><div id="next"></div><div class="head"><h2>Resumen</h2></div><div class="card chart" id="chart"></div><div class="head"><h2>Últimos movimientos</h2><button class="link" onclick="historyPage()">Ver todo</button></div><div id="recent" class="list"></div>';render();next();chart();recent()}
-function active(n){document.querySelectorAll('.nav').forEach(x=>x.classList.remove('on'));document.getElementById('n'+n).classList.add('on')}
-function next(){let a=[];d.ins.forEach(i=>{for(let n=0;n<i.count;n++)if(!(i.paid||[]).includes(n)){let q=due(i,n);if(q>=T())a.push({i,n,q});}});a.sort((x,y)=>x.q.localeCompare(y.q));let x=a[0];$('next').innerHTML=x?'<div class="up"><div><small>'+new Date(x.q+'T12:00').toLocaleDateString('es-PY')+'</small><b>'+esc(x.i.name)+' · Cuota '+(x.n+1)+'/'+x.i.count+'</b></div><b>'+M(x.i.amount)+'</b></div>':'<div class="up">No hay pagos pendientes ✓</div>'}
-function chart(){let a=[];for(let k=5;k>=0;k--){let x=new Date();x.setMonth(x.getMonth()-k);let key=x.toISOString().slice(0,7),v=d.tx.filter(t=>t.type=='e'&&t.date.slice(0,7)==key).reduce((s,t)=>s+ +t.a,0);a.push({l:x.toLocaleDateString('es-PY',{month:'short'}),v})}let mx=Math.max(1,...a.map(x=>x.v));$('chart').innerHTML=a.map(x=>'<div class="barw"><div class="bar" style="height:'+Math.max(4,x.v/mx*105)+'px"></div><small>'+x.l+'</small></div>').join('')}
-function row(x){return '<div class="row" onclick="editTx(\''+x.id+'\')"><i class="dot '+(x.type=='e'?'r':'')+'"></i><div class="main"><b>'+esc(x.desc||x.cat)+'</b><small>'+esc(x.cat)+' · '+new Date(x.date+'T12:00').toLocaleDateString('es-PY')+'</small></div><span class="amt '+(x.type=='e'?'red':'green')+'">'+(x.type=='e'?'-':'+')+M(x.a)+'</span></div>'}
-function recent(){let a=d.tx.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);$('recent').innerHTML=a.length?a.map(row).join(''):'<div class="empty">Todavía no tenés movimientos.</div>'}
-function txModal(x){$('sheet').innerHTML='<h2>'+(x?'Editar':'Nuevo')+' movimiento</h2><label>Tipo</label><select id="ft"><option value="i">Ingreso</option><option value="e">Gasto</option></select><label>Monto (G.)</label><input id="fa" type="number"><label>Fecha</label><input id="fd" type="date" value="'+(x?x.date:T())+'"><label>Categoría</label><select id="fc"><option>Alimentación</option><option>Transporte</option><option>Vivienda</option><option>Estudios</option><option>Salud</option><option>Entretenimiento</option><option>Compras</option><option>Trabajo</option><option>Otros</option></select><label>Descripción</label><input id="fx" placeholder="Descripción"><button class="btn" onclick="saveTx(\''+(x?x.id:'')+'\')">Guardar</button>'+(x?'<button class="btn danger" onclick="delTx(\''+x.id+'\')">Eliminar</button>':'');if(x){$('ft').value=x.type;$('fa').value=x.a;$('fc').value=x.cat;$('fx').value=x.desc||''}$('modal').classList.add('on')}
-function saveTx(id){let x={id:id||Date.now().toString(),type:$('ft').value,a:+$('fa').value,date:$('fd').value,cat:$('fc').value,desc:$('fx').value};if(!x.a||!x.date)return alert('Completá monto y fecha');let z=d.tx.findIndex(q=>q.id==id);z>=0?d.tx[z]=x:d.tx.push(x);close();home()}
-function editTx(id){let x=d.tx.find(q=>q.id==id);if(x)txModal(x)}function delTx(id){if(confirm('¿Eliminar?')){d.tx=d.tx.filter(x=>x.id!=id);close();save();historyPage()}}
-function historyPage(){active(1);$('main').innerHTML='<div class="head"><h2>Movimientos</h2><button class="link" onclick="txModal()">＋ Agregar</button></div><input id="search" placeholder="Buscar..." oninput="filter()"><div class="tabs"><button class="tab on" onclick="filterType(\'a\',this)">Todos</button><button class="tab" onclick="filterType(\'i\',this)">Ingresos</button><button class="tab" onclick="filterType(\'e\',this)">Gastos</button></div><div id="hist" class="list"></div>';window.ftype='a';filter()}
-function filterType(t,b){ftype=t;document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');filter()}function filter(){let q=($('search').value||'').toLowerCase(),a=d.tx.filter(x=>(ftype=='a'||x.type==ftype)&&(x.desc+' '+x.cat).toLowerCase().includes(q)).sort((a,b)=>b.date.localeCompare(a.date));$('hist').innerHTML=a.length?a.map(row).join(''):'<div class="empty">No hay movimientos.</div>'}
-function instPage(){active(2);$('main').innerHTML='<div class="head"><h2>Cuotas</h2><button class="link" onclick="instModal()">＋ Nueva</button></div><div id="ilist" class="list"></div>';$('ilist').innerHTML=d.ins.length?d.ins.map(i=>{let p=(i.paid||[]).length,n=Array.from({length:i.count},(_,j)=>j).find(j=>!i.paid?.includes(j));return '<div class="row" onclick="openInst(\''+i.id+'\')"><div class="main"><b>'+esc(i.name)+'</b><small>'+p+'/'+i.count+' pagadas'+(n!==undefined?' · Próxima '+new Date(due(i,n)+'T12:00').toLocaleDateString('es-PY'):'')+'</small></div><b>'+M(i.amount)+'</b></div>'}).join(''):'<div class="empty">No tenés cuotas registradas.</div>'}
-function instModal(){$('sheet').innerHTML='<h2>Nueva cuota</h2><label>Nombre</label><input id="iname" placeholder="Ej. Celular"><label>Monto total (G.)</label><input id="it" type="number" oninput="calc()"><label>Cantidad de cuotas</label><input id="ic" type="number" value="12" oninput="calc()"><label>Monto por cuota</label><input id="ia" type="number"><label>Primer vencimiento</label><input id="is" type="date" value="'+T()+'"><label>Día de vencimiento mensual</label><input id="iday" type="number" min="1" max="31" value="'+new Date().getDate()+'"><button class="btn" onclick="saveInst()">Crear cuotas</button>';$('modal').classList.add('on')}
-function calc(){$('ia').value=Math.round((+$('it').value||0)/(+$('ic').value||1))}
-function saveInst(){if(!$('iname').value||!$('it').value||!$('ic').value||!$('ia').value)return alert('Completá los datos');d.ins.push({id:Date.now().toString(),name:$('iname').value,total:+$('it').value,count:+$('ic').value,amount:+$('ia').value,start:$('is').value,day:+$('iday').value,paid:[]});close();save();instPage()}
-function openInst(id){let i=d.ins.find(x=>x.id==id),n=Array.from({length:i.count},(_,j)=>j).find(j=>!(i.paid||[]).includes(j));$('sheet').innerHTML='<h2>'+esc(i.name)+'</h2><div class="card"><small>Total</small><b>'+M(i.total)+'</b><small>'+(i.paid||[]).length+'/'+i.count+' pagadas</small></div>'+(n===undefined?'<p>✓ Cuota completada</p>':'<button class="btn" onclick="pay(\''+id+'\','+n+')">Marcar cuota '+(n+1)+' como pagada · '+M(i.amount)+'</button>')+'<button class="btn danger" onclick="delInst(\''+id+'\')">Eliminar cuota</button>';$('modal').classList.add('on')}
-function pay(id,n){let i=d.ins.find(x=>x.id==id);i.paid.push(n);d.tx.push({id:'p'+Date.now(),type:'e',a:i.amount,date:T(),cat:'Cuota',desc:i.name+' · Cuota '+(n+1)+'/'+i.count});close();save();instPage()}
-function delInst(id){if(confirm('¿Eliminar esta cuota?')){d.ins=d.ins.filter(x=>x.id!=id);close();save();instPage()}}
-function settings(){active(3);$('main').innerHTML='<h2>Ajustes</h2><div class="card"><b>FinanPY</b><p><small>Los datos se guardan en este iPhone.</small></p><button class="btn" onclick="dark()">Cambiar modo oscuro</button><button class="btn danger" onclick="wipe()">Borrar todos los datos</button></div><div class="card" style="margin-top:10px"><b>Recordatorios</b><p><small>FinanPY identifica los vencimientos 3 días antes. Las notificaciones automáticas requieren permiso y soporte de notificaciones web de Safari.</small></p></div>'}
-function dark(){document.body.classList.toggle('dark');d.dark=document.body.classList.contains('dark');save()}function wipe(){if(confirm('¿Borrar todos los datos?')){d={tx:[],ins:[],dark:d.dark};save();home()}}function close(){$('modal').classList.remove('on')}$('modal').onclick=e=>{if(e.target==$('modal'))close()};home();
-</script></body></html>
+const KEY="finanpy_v2";
+const today=()=>new Date().toISOString().slice(0,10);
+const money=n=>"G. "+Math.round(Number(n)||0).toLocaleString("es-PY");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+function load(){
+ try{
+  const old=JSON.parse(localStorage.getItem(KEY)||"null");
+  if(old) return old;
+  const legacy=JSON.parse(localStorage.getItem("finanpy")||"null");
+  if(legacy){localStorage.setItem(KEY,JSON.stringify(legacy));return legacy}
+ }catch(e){}
+ return {tx:[],ins:[],dark:false,budget:0};
+}
+let d=load();
+if(d.dark)document.body.classList.add("dark");
+
+function persist(){localStorage.setItem(KEY,JSON.stringify(d));updateHeader()}
+function updateHeader(){
+ const bal=d.tx.reduce((s,x)=>s+(x.type==="i"?Number(x.a):-Number(x.a)),0);
+ const ym=today().slice(0,7);
+ const inc=d.tx.filter(x=>x.type==="i"&&x.date.slice(0,7)===ym).reduce((s,x)=>s+Number(x.a),0);
+ const exp=d.tx.filter(x=>x.type==="e"&&x.date.slice(0,7)===ym).reduce((s,x)=>s+Number(x.a),0);
+ $("bal").textContent=money(bal);$("inc").textContent=money(inc);$("exp").textContent=money(exp);
+}
+
+function setActive(n){document.querySelectorAll(".nav").forEach(x=>x.classList.remove("on"));$("n"+n).classList.add("on")}
+
+function due(i,n){
+ const x=new Date(i.start+"T12:00:00");
+ x.setMonth(x.getMonth()+n);
+ const last=new Date(x.getFullYear(),x.getMonth()+1,0).getDate();
+ x.setDate(Math.min(Number(i.day)||1,last));
+ return x.toISOString().slice(0,10);
+}
+function daysUntil(date){
+ const a=new Date(today()+"T12:00:00"),b=new Date(date+"T12:00:00");
+ return Math.round((b-a)/86400000);
+}
+function pending(){
+ const a=[];
+ d.ins.forEach(i=>{
+  for(let n=0;n<i.count;n++){
+   if(!(i.paid||[]).some(p=>p.n===n || p===n)){
+    const q=due(i,n);a.push({i,n,q,days:daysUntil(q)});
+   }
+  }
+ });
+ return a.sort((a,b)=>a.q.localeCompare(b.q));
+}
+
+function home(){
+ setActive(0);
+ $("main").innerHTML=`
+ <div id="rem"></div>
+ <div class="head"><h2>Próximo pago</h2><button class="link" onclick="instPage()">Ver cuotas</button></div>
+ <div id="next"></div>
+ <div class="head"><h2>Resumen</h2></div>
+ <div class="card chart" id="chart"></div>
+ <div class="head"><h2>Últimos movimientos</h2><button class="link" onclick="historyPage()">Ver todo</button></div>
+ <div id="recent" class="list"></div>`;
+ updateHeader();renderReminder();renderNext();renderChart();renderRecent();
+}
+
+function renderReminder(){
+ const dueSoon=pending().filter(x=>x.days>=0&&x.days<=3);
+ $("rem").innerHTML=dueSoon.length?`<div class="alert"><b>🔔 Próximos vencimientos</b><br><small>${dueSoon.slice(0,2).map(x=>`${esc(x.i.name)} · cuota ${x.n+1}/${x.i.count} · ${x.days===0?"vence hoy":x.days===1?"vence mañana":"vence en "+x.days+" días"}`).join("<br>")}</small></div>`:"";
+}
+function renderNext(){
+ const x=pending().find(x=>x.days>=0);
+ $("next").innerHTML=x?`<div class="up"><div><small>${new Date(x.q+"T12:00:00").toLocaleDateString("es-PY")} · ${x.days===0?"Hoy":x.days+" días"}</small><b>${esc(x.i.name)} · Cuota ${x.n+1}/${x.i.count}</b></div><b>${money(x.i.amount)}</b></div>`:`<div class="up">No hay pagos pendientes ✓</div>`;
+}
+function renderChart(){
+ const a=[];
+ for(let k=5;k>=0;k--){const x=new Date();x.setMonth(x.getMonth()-k);const key=x.toISOString().slice(0,7),v=d.tx.filter(t=>t.type==="e"&&t.date.slice(0,7)===key).reduce((s,t)=>s+Number(t.a),0);a.push({l:x.toLocaleDateString("es-PY",{month:"short"}),v})}
+ const mx=Math.max(1,...a.map(x=>x.v));
+ $("chart").innerHTML=a.map(x=>`<div class="barw"><div class="bar" style="height:${Math.max(5,x.v/mx*112)}px"></div><small>${x.l}</small></div>`).join("");
+}
+function txRow(x){
+ return `<div class="row" onclick="editTx('${x.id}')"><i class="dot ${x.type==="e"?"r":""}"></i><div class="main"><b>${esc(x.desc||x.cat)}</b><small>${esc(x.cat)} · ${new Date(x.date+"T12:00:00").toLocaleDateString("es-PY")}</small></div><span class="amt ${x.type==="e"?"red":"green"}">${x.type==="e"?"-":"+"}${money(x.a)}</span></div>`;
+}
+function renderRecent(){
+ const a=d.tx.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+ $("recent").innerHTML=a.length?a.map(txRow).join(""):`<div class="empty">Todavía no tenés movimientos.</div>`;
+}
+
+function txModal(x){
+ $("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>${x?"Editar":"Nuevo"} movimiento</h2>
+ <label>Tipo</label><select id="ft"><option value="i">Ingreso</option><option value="e">Gasto</option></select>
+ <label>Monto (G.)</label><input id="fa" type="number" inputmode="numeric" placeholder="100000">
+ <label>Fecha</label><input id="fd" type="date" value="${x?x.date:today()}">
+ <label>Categoría</label><select id="fc"><option>Alimentación</option><option>Transporte</option><option>Vivienda</option><option>Estudios</option><option>Salud</option><option>Entretenimiento</option><option>Compras</option><option>Trabajo</option><option>Servicios</option><option>Otros</option></select>
+ <label>Descripción</label><input id="fx" placeholder="Ej. Sueldo, supermercado...">
+ <button class="btn" onclick="saveTx('${x?x.id:""}')">Guardar</button>
+ ${x?`<button class="btn danger" onclick="deleteTx('${x.id}')">Eliminar</button>`:""}`;
+ if(x){$("ft").value=x.type;$("fa").value=x.a;$("fc").value=x.cat;$("fx").value=x.desc||""}
+ $("modal").classList.add("on");
+}
+function saveTx(id){
+ const a=Number($("fa").value);
+ if(!a||a<0||!$("fd").value)return alert("Completá monto y fecha");
+ const x={id:id||uid(),type:$("ft").value,a,date:$("fd").value,cat:$("fc").value,desc:$("fx").value.trim()};
+ const idx=d.tx.findIndex(q=>q.id===id);
+ if(idx>=0)d.tx[idx]=x;else d.tx.push(x);
+ persist();closeModal();home();
+}
+function editTx(id){const x=d.tx.find(q=>q.id===id);if(x)txModal(x)}
+function deleteTx(id){if(confirm("¿Eliminar este movimiento?")){d.tx=d.tx.filter(x=>x.id!==id);persist();closeModal();historyPage()}}
+
+let ftype="a";
+function historyPage(){
+ setActive(1);
+ $("main").innerHTML=`<div class="head"><h2>Movimientos</h2><button class="link" onclick="txModal()">＋ Agregar</button></div>
+ <input id="search" placeholder="🔎 Buscar movimiento..." oninput="filterHistory()">
+ <div class="tabs"><button class="tab on" onclick="filterType('a',this)">Todos</button><button class="tab" onclick="filterType('i',this)">Ingresos</button><button class="tab" onclick="filterType('e',this)">Gastos</button></div>
+ <div id="hist" class="list"></div>`;
+ ftype="a";filterHistory();
+}
+function filterType(t,b){ftype=t;document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");filterHistory()}
+function filterHistory(){
+ const q=($("search").value||"").toLowerCase();
+ const a=d.tx.filter(x=>(ftype==="a"||x.type===ftype)&&(x.desc+" "+x.cat).toLowerCase().includes(q)).sort((a,b)=>b.date.localeCompare(a.date));
+ $("hist").innerHTML=a.length?a.map(txRow).join(""):`<div class="empty">No hay movimientos.</div>`;
+}
+
+function instPage(){
+ setActive(2);
+ $("main").innerHTML=`<div class="head"><h2>Cuotas</h2><button class="link" onclick="instModal()">＋ Nueva</button></div><div id="ilist" class="list"></div>`;
+ const a=d.ins;
+ $("ilist").innerHTML=a.length?a.map(i=>{
+  const p=(i.paid||[]).length,n=Array.from({length:i.count},(_,j)=>j).find(j=>!(i.paid||[]).some(v=>v===j||v.n===j));
+  const q=n===undefined?null:due(i,n);
+  return `<div class="row" onclick="openInst('${i.id}')"><div class="main"><b>${esc(i.name)}</b><small>${p}/${i.count} pagadas${q?" · Próxima "+new Date(q+"T12:00:00").toLocaleDateString("es-PY"):" · Completada"}</small></div><b>${money(i.amount)}</b></div>`;
+ }).join(""):`<div class="empty">No tenés cuotas registradas.</div>`;
+}
+function instModal(){
+ $("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>Nueva cuota</h2>
+ <label>Nombre</label><input id="iname" placeholder="Ej. Celular">
+ <label>Monto total (G.)</label><input id="it" type="number" inputmode="numeric" oninput="calcInstallment()" placeholder="1200000">
+ <label>Cantidad de cuotas</label><input id="ic" type="number" inputmode="numeric" value="12" oninput="calcInstallment()">
+ <label>Monto por cuota</label><input id="ia" type="number" inputmode="numeric">
+ <label>Primer vencimiento</label><input id="is" type="date" value="${today()}">
+ <label>Día de vencimiento mensual</label><input id="iday" type="number" min="1" max="31" value="${new Date().getDate()}">
+ <button class="btn" onclick="saveInstallment()">Crear cuotas</button>`;
+ $("modal").classList.add("on");
+}
+function calcInstallment(){const t=Number($("it").value)||0,c=Number($("ic").value)||1;$("ia").value=Math.round(t/c)}
+function saveInstallment(){
+ const total=Number($("it").value),count=Number($("ic").value),amount=Number($("ia").value);
+ if(!$("iname").value||!total||!count||!amount)return alert("Completá los datos");
+ d.ins.push({id:uid(),name:$("iname").value.trim(),total,count,amount,start:$("is").value,day:Number($("iday").value),paid:[]});
+ persist();closeModal();instPage();
+}
+function openInst(id){
+ const i=d.ins.find(x=>x.id===id);if(!i)return;
+ const n=Array.from({length:i.count},(_,j)=>j).find(j=>!(i.paid||[]).some(v=>v===j||v.n===j));
+ let rows="";
+ for(let j=0;j<i.count;j++){const paid=(i.paid||[]).some(v=>v===j||v.n===j),q=due(i,j);rows+=`<div class="row"><div class="main"><b>Cuota ${j+1}/${i.count}</b><small>${new Date(q+"T12:00:00").toLocaleDateString("es-PY")}</small></div><span class="${paid?"green":"gold"}">${paid?"✓ Pagada":"Pendiente"}</span></div>`}
+ $("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>${esc(i.name)}</h2>
+ <div class="kpis"><div class="card"><small>Total</small><b>${money(i.total)}</b></div><div class="card"><small>Cuota</small><b>${money(i.amount)}</b></div></div>
+ <div class="section"><small>Progreso</small><div class="progress"><i style="width:${Math.min(100,(i.paid||[]).length/i.count*100)}%"></i></div><small>${(i.paid||[]).length} de ${i.count} pagadas</small></div>
+ <div class="section list">${rows}</div>
+ ${n===undefined?"<div class='up' style='margin-top:10px'>✓ Cuota completada</div>":`<button class="btn" onclick="payInstallment('${id}',${n})">Marcar cuota ${n+1} como pagada · ${money(i.amount)}</button>`}
+ <button class="btn danger" onclick="deleteInstallment('${id}')">Eliminar cuota</button>`;
+ $("modal").classList.add("on");
+}
+function payInstallment(id,n){
+ const i=d.ins.find(x=>x.id===id);if(!i)return;
+ if(!i.paid)i.paid=[];
+ if(i.paid.some(v=>v===n||v.n===n))return;
+ i.paid.push(n);
+ d.tx.push({id:uid(),type:"e",a:i.amount,date:today(),cat:"Cuota",desc:`${i.name} · Cuota ${n+1}/${i.count}`});
+ persist();closeModal();instPage();
+}
+function deleteInstallment(id){if(confirm("¿Eliminar esta cuota y su programación?")){d.ins=d.ins.filter(x=>x.id!==id);persist();closeModal();instPage()}}
+
+function settings(){
+ setActive(3);
+ const size=new Blob([JSON.stringify(d)]).size;
+ $("main").innerHTML=`<h2>Ajustes</h2>
+ <div class="card"><b>FinanPY</b><p><small>Tus datos se guardan en este iPhone. Para mayor seguridad, hacé una copia de respaldo periódicamente.</small></p>
+ <div class="actions"><button class="btn" onclick="exportData()">⬇️ Copia de seguridad</button><button class="btn" onclick="importData()">⬆️ Restaurar</button></div></div>
+ <div class="card section"><b>Presupuesto mensual</b><p><small>Definí un límite de gastos para ver cuánto te queda.</small></p><input id="budget" type="number" inputmode="numeric" value="${d.budget||""}" placeholder="Ej. 3000000"><button class="btn" onclick="saveBudget()">Guardar presupuesto</button></div>
+ <div class="card section"><b>Recordatorios</b><p><small>FinanPY avisa dentro de la app cuando una cuota vence hoy o dentro de los próximos 3 días.</small></p></div>
+ <div class="card section"><b>Datos</b><p><small>${d.tx.length} movimientos · ${d.ins.length} planes de cuotas · ${Math.round(size/1024)} KB</small></p><button class="btn danger" onclick="wipe()">Borrar todos los datos</button></div>`;
+}
+function saveBudget(){d.budget=Number($("budget").value)||0;persist();settings()}
+function exportData(){
+ const blob=new Blob([JSON.stringify({...d,exportedAt:new Date().toISOString()},null,2)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="FinanPY-respaldo.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function importData(){
+ const input=document.createElement("input");input.type="file";input.accept=".json,application/json";
+ input.onchange=()=>{const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.tx)||!Array.isArray(x.ins))throw 0;if(confirm("Esto reemplazará los datos actuales. ¿Continuar?")){d={tx:x.tx,ins:x.ins,dark:!!x.dark,budget:Number(x.budget)||0};persist();home()}}catch(e){alert("El archivo no es un respaldo válido de FinanPY.")}};r.readAsText(f)};input.click();
+}
+function toggleDark(){d.dark=!d.dark;document.body.classList.toggle("dark",d.dark);persist()}
+function wipe(){if(confirm("¿Borrar TODOS los datos de FinanPY? Esta acción no se puede deshacer.")){d={tx:[],ins:[],dark:d.dark,budget:0};persist();home()}}
+function closeModal(){$("modal").classList.remove("on")}
+$("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeModal()});
+updateHeader();home();
+</script>
+</body>
+</html>
