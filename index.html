@@ -32,6 +32,18 @@ input,select{width:100%;padding:13px;border:1px solid var(--l);border-radius:12p
 .alert{background:#fff7df;border:1px solid #f0d18a;color:#6d5000;border-radius:15px;padding:13px}.dark .alert{background:#302a19;color:#f2d37b;border-color:#5c4d27}
 .progress{height:9px;background:var(--l);border-radius:99px;overflow:hidden;margin-top:9px}.progress i{display:block;height:100%;background:var(--g);border-radius:99px}.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.muted{color:var(--m)}
+
+/* FinanPY Pro+ */
+.hero{background:linear-gradient(145deg,#087f5b,#064f3d);color:#fff;border-radius:20px;padding:17px;margin-top:10px}
+.hero h3{margin:0 0 5px;font-size:18px}.hero p{margin:0;color:#d5eee5;font-size:13px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mini{background:var(--card);border:1px solid var(--l);border-radius:15px;padding:12px}.mini b{display:block;margin-top:4px;font-size:16px}
+.goal{margin-top:9px}.goalhead{display:flex;justify-content:space-between}.goal .progress{margin-top:7px}
+.switch{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--l)}.switch input{width:48px;margin:0}
+.badge{display:inline-block;padding:4px 8px;border-radius:10px;background:#e6f6f0;color:var(--g);font-size:11px;font-weight:800}.dark .badge{background:#183c30}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.calhead,.calday{text-align:center;font-size:11px;padding:6px}.calhead{font-weight:800;color:var(--m)}.calday{min-height:45px;border:1px solid var(--l);border-radius:8px;background:var(--card)}.calday strong{display:block}.calday.pay{background:#e8f7f1;border-color:#9ed9c6}.dark .calday.pay{background:#17382d}.calday small{font-size:8px}
+.notice{border-left:4px solid var(--g);padding:10px 12px;background:var(--card);border-radius:10px;margin:8px 0}
+.install-card{padding:14px;border:1px solid var(--l);border-radius:17px;background:var(--card)}
+@media(max-width:380px){.grid3{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -61,11 +73,11 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 function load(){
  try{
   const old=JSON.parse(localStorage.getItem(KEY)||"null");
-  if(old) return old;
+  if(old){old.subs=old.subs||[];old.goals=old.goals||[];old.cards=old.cards||[];old.settings=old.settings||{reminders:true,face:false};return old;}
   const legacy=JSON.parse(localStorage.getItem("finanpy")||"null");
-  if(legacy){localStorage.setItem(KEY,JSON.stringify(legacy));return legacy}
+  if(legacy){legacy.subs=legacy.subs||[];legacy.goals=legacy.goals||[];legacy.cards=legacy.cards||[];legacy.settings=legacy.settings||{reminders:true,face:false};localStorage.setItem(KEY,JSON.stringify(legacy));return legacy}
  }catch(e){}
- return {tx:[],ins:[],dark:false,budget:0};
+ return {tx:[],ins:[],dark:false,budget:0,subs:[],goals:[],cards:[],settings:{reminders:true,face:false}};
 }
 let d=load();
 if(d.dark)document.body.classList.add("dark");
@@ -118,7 +130,7 @@ function home(){
 }
 
 function renderReminder(){
- const dueSoon=pending().filter(x=>x.days>=0&&x.days<=3);
+ const dueSoon=pending().filter(x=>x.days>=0&&x.days<=3); const ym=today().slice(0,7); d.subs.forEach(s=>{const q=subscriptionNext(s),days=daysUntil(q);if(days>=0&&days<=3&&!(s.paid||[]).includes(ym))dueSoon.push({i:{name:s.name,count:"∞",amount:s.amount},n:0,q,days});});
  $("rem").innerHTML=dueSoon.length?`<div class="alert"><b>🔔 Próximos vencimientos</b><br><small>${dueSoon.slice(0,2).map(x=>`${esc(x.i.name)} · cuota ${x.n+1}/${x.i.count} · ${x.days===0?"vence hoy":x.days===1?"vence mañana":"vence en "+x.days+" días"}`).join("<br>")}</small></div>`:"";
 }
 function renderNext(){
@@ -180,13 +192,24 @@ function filterHistory(){
 
 function instPage(){
  setActive(2);
- $("main").innerHTML=`<div class="head"><h2>Cuotas</h2><button class="link" onclick="instModal()">＋ Nueva</button></div><div id="ilist" class="list"></div>`;
+ $("main").innerHTML=`<div class="head"><h2>Pagos</h2><button class="link" onclick="subModal()">＋ Mensualidad</button></div>
+ <div class="tabs"><button class="tab on" onclick="instPage()">Cuotas con fin</button><button class="tab" onclick="showSubs()">Mensualidades</button><button class="tab" onclick="calendarPage()">Calendario</button></div>
+ <div id="ilist" class="list"></div>`;
  const a=d.ins;
  $("ilist").innerHTML=a.length?a.map(i=>{
   const p=(i.paid||[]).length,n=Array.from({length:i.count},(_,j)=>j).find(j=>!(i.paid||[]).some(v=>v===j||v.n===j));
   const q=n===undefined?null:due(i,n);
   return `<div class="row" onclick="openInst('${i.id}')"><div class="main"><b>${esc(i.name)}</b><small>${p}/${i.count} pagadas${q?" · Próxima "+new Date(q+"T12:00:00").toLocaleDateString("es-PY"):" · Completada"}</small></div><b>${money(i.amount)}</b></div>`;
- }).join(""):`<div class="empty">No tenés cuotas registradas.</div>`;
+ }).join(""):`<div class="empty">No tenés cuotas con cantidad definida.</div>`;
+}
+function showSubs(){
+ setActive(2);
+ $("main").innerHTML=`<div class="head"><h2>Mensualidades</h2><button class="link" onclick="subModal()">＋ Nueva</button></div>
+ <div class="notice">Estas no usan formato 1/10. Se renuevan cada mes hasta que vos las elimines.</div><div id="subs" class="list"></div>`;
+ $("subs").innerHTML=d.subs.length?d.subs.map(s=>{
+  const q=subscriptionNext(s),key=today().slice(0,7),paid=(s.paid||[]).includes(key);
+  return `<div class="install-card"><div class="head"><div><b>${esc(s.name)}</b><small>${esc(s.cat)} · día ${s.day} de cada mes</small></div><b>${money(s.amount)}</b></div><div class="section"><span class="badge">${paid?"✓ Pagada este mes":"Pendiente este mes"}</span> <small>Próximo: ${new Date(q+"T12:00:00").toLocaleDateString("es-PY")}</small></div><div class="actions section"><button class="btn" onclick="subPay('${s.id}')">${paid?"Ya pagada":"Pagar este mes"}</button><button class="btn danger" onclick="deleteSub('${s.id}')">Eliminar</button></div></div>`;
+ }).join(""):`<div class="empty">Agregá Wi‑Fi, Spotify, Netflix u otra mensualidad.</div>`;
 }
 function instModal(){
  $("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>Nueva cuota</h2>
@@ -229,15 +252,80 @@ function payInstallment(id,n){
 }
 function deleteInstallment(id){if(confirm("¿Eliminar esta cuota y su programación?")){d.ins=d.ins.filter(x=>x.id!==id);persist();closeModal();instPage()}}
 
+
+function subModal(){
+ $("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>Mensualidad</h2>
+ <div class="notice">Ideal para Wi‑Fi, Spotify, Netflix, gimnasio, teléfono, etc. <b>No tiene número final de cuotas.</b></div>
+ <label>Servicio</label><input id="sn" placeholder="Ej. Wi‑Fi">
+ <label>Monto mensual (G.)</label><input id="sa" type="number" inputmode="numeric" placeholder="150000">
+ <label>Día de cobro</label><input id="sd" type="number" min="1" max="31" value="10">
+ <label>Primera fecha</label><input id="ss" type="date" value="${today()}">
+ <label>Categoría</label><select id="sc"><option>Servicios</option><option>Entretenimiento</option><option>Internet</option><option>Suscripciones</option><option>Transporte</option><option>Otros</option></select>
+ <button class="btn" onclick="saveSub()">Crear mensualidad</button>`;
+ $("modal").classList.add("on");
+}
+function saveSub(){
+ const a=Number($("sa").value),n=$("sn").value.trim(),day=Number($("sd").value);
+ if(!n||!a||!day)return alert("Completá los datos");
+ d.subs.push({id:uid(),name:n,amount:a,day,start:$("ss").value,cat:$("sc").value,paid:[]});
+ persist();closeModal();instPage();
+}
+function subPay(id){
+ const s=d.subs.find(x=>x.id===id);if(!s)return;
+ const key=today().slice(0,7);
+ if((s.paid||[]).includes(key))return alert("La mensualidad de este mes ya está pagada.");
+ s.paid=s.paid||[];s.paid.push(key);
+ d.tx.push({id:uid(),type:"e",a:s.amount,date:today(),cat:s.cat,desc:`${s.name} · Mensualidad ${key}`});
+ persist();instPage();
+}
+function deleteSub(id){if(confirm("¿Eliminar esta mensualidad?")){d.subs=d.subs.filter(x=>x.id!==id);persist();instPage()}}
+function subscriptionNext(s){
+ const now=new Date();let y=now.getFullYear(),m=now.getMonth(),day=Math.min(s.day,new Date(y,m+1,0).getDate());
+ let q=new Date(y,m,day);
+ if(q<new Date(today()+"T12:00:00")){m++;q=new Date(y,m,Math.min(s.day,new Date(y,m+1,0).getDate()))}
+ return q.toISOString().slice(0,10);
+}
+function goalModal(){
+ $("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>Meta de ahorro</h2>
+ <label>Nombre</label><input id="gn" placeholder="Ej. Auto">
+ <label>Monto objetivo (G.)</label><input id="ga" type="number" inputmode="numeric">
+ <label>Ya ahorrado (G.)</label><input id="gs" type="number" inputmode="numeric" value="0">
+ <button class="btn" onclick="saveGoal()">Crear meta</button>`;
+ $("modal").classList.add("on");
+}
+function saveGoal(){const n=$("gn").value.trim(),a=Number($("ga").value),s=Number($("gs").value)||0;if(!n||!a)return alert("Completá los datos");d.goals.push({id:uid(),name:n,target:a,saved:s});persist();closeModal();settings()}
+function addGoalMoney(id){const g=d.goals.find(x=>x.id===id);if(!g)return;const a=Number(prompt("¿Cuánto querés agregar a esta meta?","50000"));if(a>0){g.saved+=a;persist();settings()}}
+function calendarPage(){
+ setActive(2);
+ const now=new Date(),y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0);
+ let h=`<div class="head"><h2>Calendario</h2><button class="link" onclick="instPage()">Volver</button></div><div class="calendar">`;
+ ["L","M","X","J","V","S","D"].forEach(x=>h+=`<div class="calhead">${x}</div>`);
+ let offset=(first.getDay()+6)%7;for(let i=0;i<offset;i++)h+="<div></div>";
+ for(let day=1;day<=last.getDate();day++){let ds=new Date(y,m,day).toISOString().slice(0,10);let names=[];pending().filter(x=>x.q===ds).forEach(x=>names.push(x.i.name));d.subs.forEach(s=>{if(Number(s.day)===day)names.push(s.name)});h+=`<div class="calday ${names.length?"pay":""}"><strong>${day}</strong><small>${esc(names.slice(0,2).join(", "))}</small></div>`}
+ h+="</div>";$("main").innerHTML=h;
+}
+function faceID(){
+ if(!window.PublicKeyCredential)return alert("Este navegador no ofrece WebAuthn/Face ID para esta función.");
+ PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable?.().then(ok=>{
+  if(!ok)return alert("Este dispositivo/navegador no tiene un autenticador biométrico disponible para FinanPY.");
+  alert("Tu iPhone es compatible con autenticación biométrica web. Para activar Face ID como bloqueo de FinanPY necesitamos registrar una credencial WebAuthn en una versión con servidor seguro; no voy a fingir que el bloqueo ya está activo.");
+ }).catch(()=>alert("No se pudo comprobar Face ID en este navegador."));
+}
+
 function settings(){
  setActive(3);
- const size=new Blob([JSON.stringify(d)]).size;
- $("main").innerHTML=`<h2>Ajustes</h2>
- <div class="card"><b>FinanPY</b><p><small>Tus datos se guardan en este iPhone. Para mayor seguridad, hacé una copia de respaldo periódicamente.</small></p>
- <div class="actions"><button class="btn" onclick="exportData()">⬇️ Copia de seguridad</button><button class="btn" onclick="importData()">⬆️ Restaurar</button></div></div>
- <div class="card section"><b>Presupuesto mensual</b><p><small>Definí un límite de gastos para ver cuánto te queda.</small></p><input id="budget" type="number" inputmode="numeric" value="${d.budget||""}" placeholder="Ej. 3000000"><button class="btn" onclick="saveBudget()">Guardar presupuesto</button></div>
- <div class="card section"><b>Recordatorios</b><p><small>FinanPY avisa dentro de la app cuando una cuota vence hoy o dentro de los próximos 3 días.</small></p></div>
- <div class="card section"><b>Datos</b><p><small>${d.tx.length} movimientos · ${d.ins.length} planes de cuotas · ${Math.round(size/1024)} KB</small></p><button class="btn danger" onclick="wipe()">Borrar todos los datos</button></div>`;
+ const size=new Blob([JSON.stringify(d)]).size, ym=today().slice(0,7);
+ const exp=d.tx.filter(x=>x.type==="e"&&x.date.slice(0,7)===ym).reduce((s,x)=>s+Number(x.a),0);
+ const rem=d.budget?Math.max(0,d.budget-exp):0;
+ $("main").innerHTML=`<h2>Ajustes y herramientas</h2>
+ <div class="hero"><h3>FinanPY Pro+ 🇵🇾</h3><p>Controlá gastos, cuotas, mensualidades, metas y respaldos desde un solo lugar.</p></div>
+ <div class="card section"><b>Presupuesto mensual</b><p><small>Gastado: ${money(exp)}${d.budget?` · Disponible: ${money(rem)}`:""}</small></p><input id="budget" type="number" inputmode="numeric" value="${d.budget||""}" placeholder="Ej. 3000000"><button class="btn" onclick="saveBudget()">Guardar presupuesto</button></div>
+ <div class="section"><div class="head"><h2>Metas de ahorro</h2><button class="link" onclick="goalModal()">＋ Nueva</button></div><div class="list">${d.goals.length?d.goals.map(g=>`<div class="mini goal"><div class="goalhead"><b>${esc(g.name)}</b><small>${money(g.saved)} / ${money(g.target)}</small></div><div class="progress"><i style="width:${Math.min(100,g.saved/g.target*100)}%"></i></div><button class="link" onclick="addGoalMoney('${g.id}')">＋ Agregar ahorro</button></div>`).join(""):`<div class="empty">Creá una meta como auto, viaje o emergencia.</div>`}</div></div>
+ <div class="card section"><b>Seguridad</b>
+ <div class="switch"><span>Bloqueo biométrico / Face ID</span><button class="link" onclick="faceID()">Configurar</button></div>
+ <div class="switch"><span>Recordatorios dentro de FinanPY</span><span class="badge">3 días antes</span></div></div>
+ <div class="card section"><b>Copia de seguridad</b><p><small>${d.tx.length} movimientos · ${d.ins.length} cuotas · ${d.subs.length} mensualidades · ${d.goals.length} metas · ${Math.round(size/1024)} KB</small></p><div class="actions"><button class="btn" onclick="exportData()">⬇️ Exportar</button><button class="btn" onclick="importData()">⬆️ Restaurar</button></div></div>
+ <div class="card section"><b>Datos</b><p><small>Los datos actuales están guardados localmente en este dispositivo.</small></p><button class="btn danger" onclick="wipe()">Borrar todos los datos</button></div>`;
 }
 function saveBudget(){d.budget=Number($("budget").value)||0;persist();settings()}
 function exportData(){
@@ -246,10 +334,10 @@ function exportData(){
 }
 function importData(){
  const input=document.createElement("input");input.type="file";input.accept=".json,application/json";
- input.onchange=()=>{const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.tx)||!Array.isArray(x.ins))throw 0;if(confirm("Esto reemplazará los datos actuales. ¿Continuar?")){d={tx:x.tx,ins:x.ins,dark:!!x.dark,budget:Number(x.budget)||0};persist();home()}}catch(e){alert("El archivo no es un respaldo válido de FinanPY.")}};r.readAsText(f)};input.click();
+ input.onchange=()=>{const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.tx)||!Array.isArray(x.ins))throw 0;if(confirm("Esto reemplazará los datos actuales. ¿Continuar?")){d={tx:x.tx,ins:x.ins,subs:x.subs||[],goals:x.goals||[],cards:x.cards||[],settings:x.settings||{reminders:true,face:false},dark:!!x.dark,budget:Number(x.budget)||0};persist();home()}}catch(e){alert("El archivo no es un respaldo válido de FinanPY.")}};r.readAsText(f)};input.click();
 }
 function toggleDark(){d.dark=!d.dark;document.body.classList.toggle("dark",d.dark);persist()}
-function wipe(){if(confirm("¿Borrar TODOS los datos de FinanPY? Esta acción no se puede deshacer.")){d={tx:[],ins:[],dark:d.dark,budget:0};persist();home()}}
+function wipe(){if(confirm("¿Borrar TODOS los datos de FinanPY? Esta acción no se puede deshacer.")){d={tx:[],ins:[],subs:[],goals:[],cards:[],settings:{reminders:true,face:false},dark:d.dark,budget:0};persist();home()}}
 function closeModal(){$("modal").classList.remove("on")}
 $("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeModal()});
 updateHeader();home();
